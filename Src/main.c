@@ -47,6 +47,10 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
  static volatile uint16_t gLastError;
+ /* UART handler declaration */
+ UART_HandleTypeDef UartHandle;
+
+ uint8_t string[15] = "Hello World!\n\r";
 
 /* Private function prototypes -----------------------------------------------*/
 static void MyFlagInterruptHandler(void);
@@ -60,8 +64,8 @@ static void MyFlagInterruptHandler(void);
   */
 int main(void)
 {
-  int32_t pos;
-  uint16_t mySpeed;
+  // int32_t pos;
+  // uint16_t mySpeed;
 
   /* STM32xx HAL library initialization */
   HAL_Init();
@@ -80,6 +84,33 @@ int main(void)
 
   /* Attach the function Error_Handler (defined below) to the error Handler*/
   BSP_MotorControl_AttachErrorHandler(Error_Handler);
+
+
+  //---- Cip: UART. Check
+  /* UART2 configured as follow:
+      - Word Length = 9 Bits
+      - Stop Bit = One Stop bit
+      - Parity = NO parity
+      - BaudRate = 9600 baud
+      - Hardware flow control disabled (RTS and CTS signals) */
+  UartHandle.Instance          = USARTx;
+
+  UartHandle.Init.BaudRate     = 9600;
+  UartHandle.Init.WordLength   = UART_WORDLENGTH_8B;
+  UartHandle.Init.StopBits     = UART_STOPBITS_1;
+  UartHandle.Init.Parity       = UART_PARITY_NONE;
+  UartHandle.Init.HwFlowCtl    = UART_HWCONTROL_NONE;
+  UartHandle.Init.Mode         = UART_MODE_TX_RX;
+  UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
+
+  if(HAL_UART_Init(&UartHandle) != HAL_OK)
+  {
+    /* Initialization Error */
+    Error_Handler(1002);
+  }
+  //---- Cip: UART. Check
+
+  HAL_UART_Transmit(&UartHandle, string, sizeof(string), 0xFFFF);
 
 //----- Move of 16000 steps in the FW direction
 
@@ -339,6 +370,8 @@ int main(void)
 
     /* Wait for the motor of device 0 ends moving */
     BSP_MotorControl_WaitWhileActive(0);  
+
+    HAL_UART_Transmit(&UartHandle, string, sizeof(string), 0xFFFF);
   }
 }
 
