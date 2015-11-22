@@ -87,9 +87,24 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Application/Sys</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<name>Application/clock_f4.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/clock_f4.c</locationURI>
+		</link>
+		<link>
+			<name>Application/main.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/main.c</locationURI>
+		</link>
+		<link>
+			<name>Application/stm32f4xx_hal_msp.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/stm32f4xx_hal_msp.c</locationURI>
+		</link>
+		<link>
+			<name>Application/stm32f4xx_it.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/stm32f4xx_it.c</locationURI>
 		</link>
 		<link>
 			<name>Doc/readme.txt</name>
@@ -110,26 +125,6 @@
 			<name>Drivers/STM32F4xx_HAL_Driver</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Application/Sys/clock_f4.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/clock_f4.c</locationURI>
-		</link>
-		<link>
-			<name>Application/Sys/main.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/main.c</locationURI>
-		</link>
-		<link>
-			<name>Application/Sys/stm32f4xx_hal_msp.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/stm32f4xx_hal_msp.c</locationURI>
-		</link>
-		<link>
-			<name>Application/Sys/stm32f4xx_it.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/stm32f4xx_it.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/Components</name>
