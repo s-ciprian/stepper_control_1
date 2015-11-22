@@ -69,6 +69,7 @@ void Error_Handler(uint16_t error);
 #define USARTx                           USART2
 
 //TODO: HAL library - update to version 1.9.0
+#define HAL_VERSION_GREATER_THAN_1_3_0
 #ifdef HAL_VERSION_GREATER_THAN_1_3_0
 
 #define USARTx_CLK_ENABLE()              __HAL_RCC_USART2_CLK_ENABLE();
