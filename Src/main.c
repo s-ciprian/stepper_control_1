@@ -37,6 +37,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "uart2.h"
 
 /** @defgroup IHM01A1_Example_for_1_motor_device
   * @{
@@ -85,60 +86,9 @@ int main(void)
   /* Attach the function Error_Handler (defined below) to the error Handler*/
   BSP_MotorControl_AttachErrorHandler(Error_Handler);
 
-  //######################################
-  //---- Cip: UART test init pins
-  GPIO_InitTypeDef  GPIO_InitStruct;
+  uart2_Init();
 
-  /*##-1- Enable peripherals and GPIO Clocks #################################*/
-  /* Enable GPIO TX/RX clock */
-  USARTx_TX_GPIO_CLK_ENABLE();
-  USARTx_RX_GPIO_CLK_ENABLE();
-
-  /* Enable USARTx clock */
-  USARTx_CLK_ENABLE();
-
-  /*##-2- Configure peripheral GPIO ##########################################*/
-  /* UART TX GPIO pin configuration  */
-  GPIO_InitStruct.Pin       = USARTx_TX_PIN;
-  GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull      = GPIO_PULLUP;
-  GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
-  GPIO_InitStruct.Alternate = USARTx_TX_AF;
-
-  HAL_GPIO_Init(USARTx_TX_GPIO_PORT, &GPIO_InitStruct);
-
-  /* UART RX GPIO pin configuration  */
-  GPIO_InitStruct.Pin = USARTx_RX_PIN;
-  GPIO_InitStruct.Alternate = USARTx_RX_AF;
-
-  HAL_GPIO_Init(USARTx_RX_GPIO_PORT, &GPIO_InitStruct);
-  //######################################
-
-  //---- Cip: UART. Check
-  /* UART2 configured as follow:
-      - Word Length = 9 Bits
-      - Stop Bit = One Stop bit
-      - Parity = NO parity
-      - BaudRate = 9600 baud
-      - Hardware flow control disabled (RTS and CTS signals) */
-  UartHandle.Instance          = USARTx;
-
-  UartHandle.Init.BaudRate     = 9600;
-  UartHandle.Init.WordLength   = UART_WORDLENGTH_8B;
-  UartHandle.Init.StopBits     = UART_STOPBITS_1;
-  UartHandle.Init.Parity       = UART_PARITY_NONE;
-  UartHandle.Init.HwFlowCtl    = UART_HWCONTROL_NONE;
-  UartHandle.Init.Mode         = UART_MODE_TX_RX;
-  UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
-
-  if(HAL_UART_Init(&UartHandle) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler(1002);
-  }
-  //---- Cip: UART. Check
-
-  HAL_UART_Transmit(&UartHandle, string, sizeof(string), 0xFFFF);
+  uart2_Transmit(string, sizeof(string));
 
 //----- Move of 16000 steps in the FW direction
 
@@ -399,7 +349,7 @@ int main(void)
     /* Wait for the motor of device 0 ends moving */
     BSP_MotorControl_WaitWhileActive(0);  
 
-    HAL_UART_Transmit(&UartHandle, string, sizeof(string), 0xFFFF);
+    uart2_Transmit(string, sizeof(string));
   }
 }
 
