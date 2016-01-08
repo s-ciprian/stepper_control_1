@@ -92,9 +92,19 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Src/clock_f4.c</locationURI>
 		</link>
 		<link>
+			<name>Application/cmd</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Application/main.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Src/main.c</locationURI>
+		</link>
+		<link>
+			<name>Application/stepper_controler</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Application/stm32f4xx_hal_msp.c</name>
@@ -130,6 +140,26 @@
 			<name>Drivers/STM32F4xx_HAL_Driver</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Application/cmd/cmd.c</name>
+			<type>1</type>
+			<location>D:/working/mc_1s/Src/cmd/cmd.c</location>
+		</link>
+		<link>
+			<name>Application/cmd/cmd.h</name>
+			<type>1</type>
+			<location>D:/working/mc_1s/Src/cmd/cmd.h</location>
+		</link>
+		<link>
+			<name>Application/stepper_controler/stepper_ctrl.c</name>
+			<type>1</type>
+			<location>D:/working/mc_1s/Src/stepper_ctrl/stepper_ctrl.c</location>
+		</link>
+		<link>
+			<name>Application/stepper_controler/stepper_ctrl.h</name>
+			<type>1</type>
+			<location>D:/working/mc_1s/Src/stepper_ctrl/stepper_ctrl.h</location>
 		</link>
 		<link>
 			<name>Drivers/BSP/Components</name>

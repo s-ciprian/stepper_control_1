@@ -38,6 +38,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "uart2.h"
+#include "stepper_ctrl.h"
+#include "cmd.h"
 
 /** @defgroup IHM01A1_Example_for_1_motor_device
   * @{
@@ -88,219 +90,11 @@ int main(void)
 
   uart2_Init();
 
+  stepper_ctrl_Init();
+
   uart2_Transmit(string, sizeof(string));
 
-//----- Move of 16000 steps in the FW direction
-
-  /* Move device 0 of 16000 steps in the FORWARD direction*/
-//  BSP_MotorControl_Move(0, FORWARD, 16000);
-
-  /* Wait for the motor of device 0 ends moving */
-//  BSP_MotorControl_WaitWhileActive(0);
-
-  /* Wait for 2 seconds */
-//  HAL_Delay(2000);
-  
-//----- Move of 16000 steps in the BW direction
-
-  /* Move device 0 of 16000 steps in the BACKWARD direction*/
-//  BSP_MotorControl_Move(0, BACKWARD, 16000);
-
-  /* Wait for the motor of device 0 ends moving */
-//  BSP_MotorControl_WaitWhileActive(0);
-
-   /* Set the current position of device 0 to be the Home position */
-//  BSP_MotorControl_SetHome(0);
-  
-  /* Wait for 2 seconds */
-//  HAL_Delay(2000);
-
-//----- Go to position -6400
-
-  /* Request device 0 to go to position -6400 */
-//  BSP_MotorControl_GoTo(0,-6400);
-  
-  /* Wait for the motor ends moving */
-//  BSP_MotorControl_WaitWhileActive(0);
-
-  /* Get current position of device 0*/
-//  pos = BSP_MotorControl_GetPosition(0);
-
-//  if (pos != -6400)
-//  {
-//    Error_Handler(11);
-//  }
-  
-  /* Set the current position of device 0 to be the Mark position */
-//  BSP_MotorControl_SetMark(0);
-
-  /* Wait for 2 seconds */
-//  HAL_Delay(2000);
-  
-//----- Go Home
-
-  /* Request device 0 to go to Home */
-//  BSP_MotorControl_GoHome(0);
-//  BSP_MotorControl_WaitWhileActive(0);
-
-  /* Get current position of device 0 */
-//  pos = BSP_MotorControl_GetPosition(0);
-  
-  /* Wait for 2 seconds */
-//  HAL_Delay(2000);
-
-//----- Go to position 6400
-
-  /* Request device 0 to go to position 6400 */
-//  BSP_MotorControl_GoTo(0,6400);
-  
-  /* Wait for the motor of device 0 ends moving */
-//  BSP_MotorControl_WaitWhileActive(0);
-
-  /* Get current position of device 0*/
-//  pos = BSP_MotorControl_GetPosition(0);
-
-  /* Wait for 2 seconds */
-//  HAL_Delay(2000);
-  
-//----- Go Mark which was set previously after go to -6400
-
-  /* Request device 0 to go to Mark position */
-//  BSP_MotorControl_GoMark(0);
-  
-  /* Wait for the motor of device 0 ends moving */
-//  BSP_MotorControl_WaitWhileActive(0);
-
-  /* Get current position of device 0 */
-//  pos = BSP_MotorControl_GetPosition(0);
-
-  /* Wait for 2 seconds */
-//  HAL_Delay(2000);
-
-//----- Run the motor BACKWARD
-
-  /* Request device 0 to run BACKWARD */
-//   BSP_MotorControl_Run(0,BACKWARD);
-//   HAL_Delay(5000);
-
-   /* Get current speed of device 0 */
-//   mySpeed = BSP_MotorControl_GetCurrentSpeed(0);
-
-//----- Increase the speed while running
-
-  /* Increase speed of device 0 to 2400 step/s */
-//  BSP_MotorControl_SetMaxSpeed(0,2400);
-//  HAL_Delay(5000);
-
-   /* Get current speed of device 0 */
-//   mySpeed = BSP_MotorControl_GetCurrentSpeed(0);
-
-//----- Decrease the speed while running
-
-  /* Decrease speed of device 0 to 1200 step/s */
-//  BSP_MotorControl_SetMaxSpeed(0,1200);
-//  HAL_Delay(5000);
-
-  /* Get current speed */
-//  mySpeed = BSP_MotorControl_GetCurrentSpeed(0);
-
-//----- Increase acceleration while running
-
-  /* Increase acceleration of device 0 to 480 step/s^2 */
-//  BSP_MotorControl_SetAcceleration(0,480);
-//  HAL_Delay(5000);
-
-  /* Increase speed of device 0 to 2400 step/s */
-//  BSP_MotorControl_SetMaxSpeed(0,2400);
-//  HAL_Delay(5000);
-
-  /* Get current speed of device 0 */
-//  mySpeed = BSP_MotorControl_GetCurrentSpeed(0);
-
-//  if (mySpeed != 2400)
-//  {
-//    Error_Handler(10);
-//  }
-//----- Increase deceleration while running
-
-  /* Increase deceleration of device 0 to 480 step/s^2 */
-//  BSP_MotorControl_SetDeceleration(0,480);
-//  HAL_Delay(5000);
-
-  /* Decrease speed of device 0 to 1200 step/s */
-//  BSP_MotorControl_SetMaxSpeed(0,1200);
-//  HAL_Delay(5000);
-
-  /* Get current speed */
-//  mySpeed = BSP_MotorControl_GetCurrentSpeed(0);
-
-//----- Soft stopped required while running
-
-  /* Request soft stop of device 0 */
-//  BSP_MotorControl_SoftStop(0);
-
-  /* Wait for the motor of device 0 ends moving */  
-// BSP_MotorControl_WaitWhileActive(0);
-
-  /* Wait for 2 seconds */
-//  HAL_Delay(2000);
-
-//----- Run stopped by hardstop
-
-  /* Request device 0 to run in FORWARD direction */
-//  BSP_MotorControl_Run(0,FORWARD);
-//  HAL_Delay(5000);
-  
-  /* Request device 0 to immediatly stop */
-//  BSP_MotorControl_HardStop(0);
-//  BSP_MotorControl_WaitWhileActive(0);
-
-  /* Wait for 2 seconds */
-//  HAL_Delay(2000);
-  
-//----- GOTO stopped by softstop
-
- /* Request device 0 to go to position 20000  */
-//  BSP_MotorControl_GoTo(0,20000);
-//  HAL_Delay(5000);
-
-  /* Request device 0 to perform a soft stop */
-//  BSP_MotorControl_SoftStop(0);
-//  BSP_MotorControl_WaitWhileActive(0);
-
-  /* Wait for 2 seconds */
-//  HAL_Delay(2000);
-
-  //----- Read inexistent register to test MyFlagInterruptHandler
-
-  /* Try to read an inexistent register */
-  /* the flag interrupt should be raised */
-  /* and the MyFlagInterruptHandler function called */
-//  BSP_MotorControl_CmdGetParam(0,0x1F);
-//  HAL_Delay(500);
-
-//----- Change step mode to full step mode
-
-  /* Select full step mode for device 0 */
-//   BSP_MotorControl_SelectStepMode(0,STEP_MODE_FULL);
-
-  /* Set speed and acceleration to be consistent with full step mode */
-//   BSP_MotorControl_SetMaxSpeed(0,100);
-//   BSP_MotorControl_SetMinSpeed(0,50);
-//   BSP_MotorControl_SetAcceleration(0,10);
-//   BSP_MotorControl_SetDeceleration(0,10);
-
-  /* Request device 0 to go position 200 */
-//   BSP_MotorControl_GoTo(0,200);
-
-  /* Wait for the motor of device 0 ends moving */
-//   BSP_MotorControl_WaitWhileActive(0);
-
-  /* Get current position */
-//  pos =  BSP_MotorControl_GetPosition(0);
-
-  /* Wait for 2 seconds */
-//  HAL_Delay(2000);
+  // old code moved in function void originalTestCode(void)
   
 //----- Restore 1/16 microstepping mode
 
@@ -313,15 +107,20 @@ int main(void)
   BSP_MotorControl_SetAcceleration(0,1600);
   BSP_MotorControl_SetDeceleration(0,1600);
 
-  BSP_MotorControl_GoTo(0, -60000);
-  BSP_MotorControl_WaitWhileActive(0);
-  BSP_MotorControl_GoTo(0, 0);
-  BSP_MotorControl_WaitWhileActive(0);
-  BSP_MotorControl_GoTo(0, -60000);
-  BSP_MotorControl_WaitWhileActive(0);
-  BSP_MotorControl_GoTo(0, 0);
-  BSP_MotorControl_WaitWhileActive(0);
-  HAL_Delay(500);
+//  BSP_MotorControl_GoTo(0, -60000);
+//  BSP_MotorControl_WaitWhileActive(0);
+//  BSP_MotorControl_GoTo(0, 0);
+//  BSP_MotorControl_WaitWhileActive(0);
+//  BSP_MotorControl_GoTo(0, -60000);
+//  BSP_MotorControl_WaitWhileActive(0);
+//  BSP_MotorControl_GoTo(0, 0);
+//  BSP_MotorControl_WaitWhileActive(0);
+//  HAL_Delay(500);
+
+    // Testing commands to motor driver
+    cmdProcessCommand("sm_GoTo -60000");
+    BSP_MotorControl_WaitWhileActive(0);
+    cmdProcessCommand("sm_GoTo 0");
 
    // Cip - Testing
    /* Select full step mode for device 0 */
@@ -464,6 +263,225 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
+
+
+void originalTestCode(void)
+{
+	int32_t pos;
+	uint16_t mySpeed;
+	//----- Move of 16000 steps in the FW direction
+
+	  /* Move device 0 of 16000 steps in the FORWARD direction*/
+	  BSP_MotorControl_Move(0, FORWARD, 16000);
+
+	  /* Wait for the motor of device 0 ends moving */
+	  BSP_MotorControl_WaitWhileActive(0);
+
+	  /* Wait for 2 seconds */
+	  HAL_Delay(2000);
+
+	//----- Move of 16000 steps in the BW direction
+
+	  /* Move device 0 of 16000 steps in the BACKWARD direction*/
+	  BSP_MotorControl_Move(0, BACKWARD, 16000);
+
+	  /* Wait for the motor of device 0 ends moving */
+	  BSP_MotorControl_WaitWhileActive(0);
+
+	   /* Set the current position of device 0 to be the Home position */
+	  BSP_MotorControl_SetHome(0);
+
+	  /* Wait for 2 seconds */
+	  HAL_Delay(2000);
+
+	//----- Go to position -6400
+
+	  /* Request device 0 to go to position -6400 */
+	  BSP_MotorControl_GoTo(0,-6400);
+
+	  /* Wait for the motor ends moving */
+	  BSP_MotorControl_WaitWhileActive(0);
+
+	  /* Get current position of device 0*/
+	  pos = BSP_MotorControl_GetPosition(0);
+
+	  if (pos != -6400)
+	  {
+	    Error_Handler(11);
+	  }
+
+	  /* Set the current position of device 0 to be the Mark position */
+	  BSP_MotorControl_SetMark(0);
+
+	  /* Wait for 2 seconds */
+	  HAL_Delay(2000);
+
+	//----- Go Home
+
+	  /* Request device 0 to go to Home */
+	  BSP_MotorControl_GoHome(0);
+	  BSP_MotorControl_WaitWhileActive(0);
+
+	  /* Get current position of device 0 */
+	  pos = BSP_MotorControl_GetPosition(0);
+
+	  /* Wait for 2 seconds */
+	  HAL_Delay(2000);
+
+	//----- Go to position 6400
+
+	  /* Request device 0 to go to position 6400 */
+	  BSP_MotorControl_GoTo(0,6400);
+
+	  /* Wait for the motor of device 0 ends moving */
+	  BSP_MotorControl_WaitWhileActive(0);
+
+	  /* Get current position of device 0*/
+	  pos = BSP_MotorControl_GetPosition(0);
+
+	  /* Wait for 2 seconds */
+	  HAL_Delay(2000);
+
+	//----- Go Mark which was set previously after go to -6400
+
+	  /* Request device 0 to go to Mark position */
+	  BSP_MotorControl_GoMark(0);
+
+	  /* Wait for the motor of device 0 ends moving */
+	  BSP_MotorControl_WaitWhileActive(0);
+
+	  /* Get current position of device 0 */
+	  pos = BSP_MotorControl_GetPosition(0);
+
+	  /* Wait for 2 seconds */
+	  HAL_Delay(2000);
+
+	//----- Run the motor BACKWARD
+
+	  /* Request device 0 to run BACKWARD */
+	   BSP_MotorControl_Run(0,BACKWARD);
+	   HAL_Delay(5000);
+
+	   /* Get current speed of device 0 */
+	   mySpeed = BSP_MotorControl_GetCurrentSpeed(0);
+
+	//----- Increase the speed while running
+
+	  /* Increase speed of device 0 to 2400 step/s */
+	  BSP_MotorControl_SetMaxSpeed(0,2400);
+	  HAL_Delay(5000);
+
+	   /* Get current speed of device 0 */
+	   mySpeed = BSP_MotorControl_GetCurrentSpeed(0);
+
+	//----- Decrease the speed while running
+
+	  /* Decrease speed of device 0 to 1200 step/s */
+	  BSP_MotorControl_SetMaxSpeed(0,1200);
+	  HAL_Delay(5000);
+
+	  /* Get current speed */
+	  mySpeed = BSP_MotorControl_GetCurrentSpeed(0);
+
+	//----- Increase acceleration while running
+
+	  /* Increase acceleration of device 0 to 480 step/s^2 */
+	  BSP_MotorControl_SetAcceleration(0,480);
+	  HAL_Delay(5000);
+
+	  /* Increase speed of device 0 to 2400 step/s */
+	  BSP_MotorControl_SetMaxSpeed(0,2400);
+	  HAL_Delay(5000);
+
+	  /* Get current speed of device 0 */
+	  mySpeed = BSP_MotorControl_GetCurrentSpeed(0);
+
+	  if (mySpeed != 2400)
+	  {
+	    Error_Handler(10);
+	  }
+	//----- Increase deceleration while running
+
+	  /* Increase deceleration of device 0 to 480 step/s^2 */
+	  BSP_MotorControl_SetDeceleration(0,480);
+	  HAL_Delay(5000);
+
+	  /* Decrease speed of device 0 to 1200 step/s */
+	  BSP_MotorControl_SetMaxSpeed(0,1200);
+	  HAL_Delay(5000);
+
+	  /* Get current speed */
+	  mySpeed = BSP_MotorControl_GetCurrentSpeed(0);
+
+	//----- Soft stopped required while running
+
+	  /* Request soft stop of device 0 */
+	  BSP_MotorControl_SoftStop(0);
+
+	  /* Wait for the motor of device 0 ends moving */
+	 BSP_MotorControl_WaitWhileActive(0);
+
+	  /* Wait for 2 seconds */
+	  HAL_Delay(2000);
+
+	//----- Run stopped by hardstop
+
+	  /* Request device 0 to run in FORWARD direction */
+	  BSP_MotorControl_Run(0,FORWARD);
+	  HAL_Delay(5000);
+
+	  /* Request device 0 to immediatly stop */
+	  BSP_MotorControl_HardStop(0);
+	  BSP_MotorControl_WaitWhileActive(0);
+
+	  /* Wait for 2 seconds */
+	  HAL_Delay(2000);
+
+	//----- GOTO stopped by softstop
+
+	 /* Request device 0 to go to position 20000  */
+	  BSP_MotorControl_GoTo(0,20000);
+	  HAL_Delay(5000);
+
+	  /* Request device 0 to perform a soft stop */
+	  BSP_MotorControl_SoftStop(0);
+	  BSP_MotorControl_WaitWhileActive(0);
+
+	  /* Wait for 2 seconds */
+	  HAL_Delay(2000);
+
+	  //----- Read inexistent register to test MyFlagInterruptHandler
+
+	  /* Try to read an inexistent register */
+	  /* the flag interrupt should be raised */
+	  /* and the MyFlagInterruptHandler function called */
+	  BSP_MotorControl_CmdGetParam(0,0x1F);
+	  HAL_Delay(500);
+
+	//----- Change step mode to full step mode
+
+	  /* Select full step mode for device 0 */
+	   BSP_MotorControl_SelectStepMode(0,STEP_MODE_FULL);
+
+	  /* Set speed and acceleration to be consistent with full step mode */
+	   BSP_MotorControl_SetMaxSpeed(0,100);
+	   BSP_MotorControl_SetMinSpeed(0,50);
+	   BSP_MotorControl_SetAcceleration(0,10);
+	   BSP_MotorControl_SetDeceleration(0,10);
+
+	  /* Request device 0 to go position 200 */
+	   BSP_MotorControl_GoTo(0,200);
+
+	  /* Wait for the motor of device 0 ends moving */
+	   BSP_MotorControl_WaitWhileActive(0);
+
+	  /* Get current position */
+	  pos =  BSP_MotorControl_GetPosition(0);
+
+	  /* Wait for 2 seconds */
+	  HAL_Delay(2000);
+}
+
 
 /**
   * @}
