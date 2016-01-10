@@ -54,6 +54,7 @@
  UART_HandleTypeDef UartHandle;
 
  uint8_t string[15] = "Hello World!\n\r";
+ uint32_t currentTime;
 
 /* Private function prototypes -----------------------------------------------*/
 static void MyFlagInterruptHandler(void);
@@ -92,11 +93,11 @@ int main(void)
 
   stepper_ctrl_Init();
 
+//  BSP_LED_Init(LED2);
+
   uart2_Transmit(string, sizeof(string));
 
   // old code moved in function void originalTestCode(void)
-  
-//----- Restore 1/16 microstepping mode
 
   /* Reset device 0 to 1/x microstepping mode */
   BSP_MotorControl_SelectStepMode(0, STEP_MODE_1_8);
@@ -107,49 +108,35 @@ int main(void)
   BSP_MotorControl_SetAcceleration(0,1600);
   BSP_MotorControl_SetDeceleration(0,1600);
 
-//  BSP_MotorControl_GoTo(0, -60000);
-//  BSP_MotorControl_WaitWhileActive(0);
-//  BSP_MotorControl_GoTo(0, 0);
-//  BSP_MotorControl_WaitWhileActive(0);
-//  BSP_MotorControl_GoTo(0, -60000);
-//  BSP_MotorControl_WaitWhileActive(0);
-//  BSP_MotorControl_GoTo(0, 0);
-//  BSP_MotorControl_WaitWhileActive(0);
-//  HAL_Delay(500);
-
-    // Testing commands to motor driver
-    cmdProcessCommand("sm_GoTo -60000");
-    BSP_MotorControl_WaitWhileActive(0);
-    cmdProcessCommand("sm_GoTo 0");
-
    // Cip - Testing
    /* Select full step mode for device 0 */
-   BSP_MotorControl_SelectStepMode(0, STEP_MODE_FULL);
+//   BSP_MotorControl_SelectStepMode(0, STEP_MODE_FULL);
    /* Update speed, acceleration, deceleration for */
-   BSP_MotorControl_SetMaxSpeed(0, 3200);
-   BSP_MotorControl_SetMinSpeed(0, 400);
-   BSP_MotorControl_SetAcceleration(0, 1600);
-   BSP_MotorControl_SetDeceleration(0, 1600);
+//   BSP_MotorControl_SetMaxSpeed(0, 3200);
+//   BSP_MotorControl_SetMinSpeed(0, 400);
+//   BSP_MotorControl_SetAcceleration(0, 1600);
+//   BSP_MotorControl_SetDeceleration(0, 1600);
 
 //   volatile uint32_t param = BSP_MotorControl_CmdGetParam(0, L6474_TVAL);
 
-  /* Infinite loop */
-  while(1)
-  {
-    /* Request device 0 to go position */
-    BSP_MotorControl_GoTo(0, -30000);
+   // Testing commands to motor driver
+   cmdProcessCommand("sm_GoTo -60000");
 
-    /* Wait for the motor of device 0 ends moving */
-    BSP_MotorControl_WaitWhileActive(0);
+   /* Infinite loop */
+   while(1)
+   {
+	   // Get actual time (in miliseconds)
+	   currentTime = HAL_GetTick();
 
-    /* Request device 0 to go position */
-    BSP_MotorControl_GoTo(0, 30000);
+	   // Testing commands to motor driver
+	   //cmdProcessCommand("sm_GoTo -60000");
+	   //BSP_MotorControl_GoTo(0,60000);
 
-    /* Wait for the motor of device 0 ends moving */
-    BSP_MotorControl_WaitWhileActive(0);  
+	   // Call stepper motor control function
+	   stepper_ctrlFnc(currentTime);
 
-    uart2_Transmit(string, sizeof(string));
-  }
+//	   uart2_Transmit(string, sizeof(string));
+   }
 }
 
 /**

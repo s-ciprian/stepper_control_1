@@ -3,9 +3,11 @@
 #include <string.h>
 #include <stdint.h>
 #include <errno.h>
+#include "stm32f4xx_nucleo.h"
 #include "motorcontrol.h"
 #include "stepper_ctrl.h"
 #include "cmd.h"
+#include "sch_hlp.h"
 
 
 #define FIRST_AXIS 0
@@ -23,6 +25,7 @@ typedef enum _mcState_t
 typedef enum _mcCmd_t
 {
 	NoCmd,
+	Tick,
     AbsPos,
     RelPos,
     Jog,
@@ -73,6 +76,8 @@ static int32_t process_sm_GoTo(int argc, char *argv[])
     mcCmdData.cmd = AbsPos;
     mcCmdData.dir = -1;
     mcCmdData.pos = n;
+
+    stepper_ctrl_ProcessEvent(&mcCmdData);
 
 	return 1;
 }
@@ -130,6 +135,7 @@ void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
 		case Movement_Positioning_Absolute:
 			if (INACTIVE == BSP_MotorControl_GetDeviceState(FIRST_AXIS))
 			{
+				mcCmdData.cmd = NoCmd;
 				mcState = Idle;
 			}
 			break;
@@ -149,6 +155,30 @@ void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
 			mcState = Idle;
 			// TODO: Add an error if this state is reached
 			break;
+	}
+
+}
+
+void stepper_ctrlFnc(uint32_t current_time)
+{
+	const uint32_t tsk_recr = 10;
+	static uint32_t elapsed_time = 0;
+	static uint32_t prevoius_time = 0;
+
+
+	elapsed_time = timeDiff(current_time, prevoius_time);
+
+	if (elapsed_time >= tsk_recr)
+	{
+		// call here function "stepper_ctrl_ProcessEvent"
+	    mcCmdData.cmd = Tick;
+	    mcCmdData.dir = -1;
+	    mcCmdData.pos = 0;
+		stepper_ctrl_ProcessEvent(&mcCmdData);
+		// test recurrence
+		//BSP_LED_Toggle(LED2);
+
+		prevoius_time = current_time;
 	}
 
 }

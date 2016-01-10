@@ -39,6 +39,7 @@
 									<listOptionValue builtIn="false" value="..\..\Src\comm"/>
 									<listOptionValue builtIn="false" value="..\..\Src\cmd"/>
 									<listOptionValue builtIn="false" value="..\..\Src\stepper_ctrl"/>
+									<listOptionValue builtIn="false" value="..\..\Src\scheduler"/>
 									<listOptionValue builtIn="false" value="..\..\Drivers\CMSIS\Device\ST\STM32F4xx\Include"/>
 									<listOptionValue builtIn="false" value="..\..\Drivers\STM32F4xx_HAL_Driver\Inc"/>
 									<listOptionValue builtIn="false" value="..\..\Drivers\BSP\STM32F4xx-Nucleo"/>

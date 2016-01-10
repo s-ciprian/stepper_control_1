@@ -102,6 +102,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Src/main.c</locationURI>
 		</link>
 		<link>
+			<name>Application/sch_hlp</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Application/stepper_controler</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -150,6 +155,16 @@
 			<name>Application/cmd/cmd.h</name>
 			<type>1</type>
 			<location>D:/working/mc_1s/Src/cmd/cmd.h</location>
+		</link>
+		<link>
+			<name>Application/sch_hlp/sch_hlp.c</name>
+			<type>1</type>
+			<location>D:/working/mc_1s/Src/scheduler/sch_hlp.c</location>
+		</link>
+		<link>
+			<name>Application/sch_hlp/sch_hlp.h</name>
+			<type>1</type>
+			<location>D:/working/mc_1s/Src/scheduler/sch_hlp.h</location>
 		</link>
 		<link>
 			<name>Application/stepper_controler/stepper_ctrl.c</name>

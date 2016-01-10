@@ -9,6 +9,7 @@ extern "C"
 
 
 void stepper_ctrl_Init(void);
+void stepper_ctrlFnc(uint32_t current_time);
 
 
 #ifdef __cplusplus
