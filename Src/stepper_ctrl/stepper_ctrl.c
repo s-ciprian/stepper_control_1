@@ -10,8 +10,6 @@
 #include "sch_hlp.h"
 
 
-#define FIRST_AXIS 0
-
 typedef enum _mcState_t
 {
 	Idle,
@@ -34,6 +32,12 @@ typedef enum _mcCmd_t
 } mcCmd_t;
 
 
+typedef struct _mcAxis_t
+{
+	uint8_t id;
+	int32_t act_pos;
+} mcAxis_t;
+
 typedef struct _mcCmdData_t
 {
 	mcCmd_t cmd;
@@ -42,21 +46,28 @@ typedef struct _mcCmdData_t
 } mcCmdData_t;
 
 
-// Function prototypes for module commands
-static int32_t process_sm_GoTo(int argc, char *argv[]);
+static void stepper_ctrl_ProcessEvent(mcCmdData_t *c);
 
-// Define commands that will be supported by this module
-cmdObj_t sm_GoTo = { "sm_GoTo", process_sm_GoTo, 0 };
+// Function prototypes for module commands
+static int32_t process_mc_GoTo(int argc, char *argv[]);
+static int32_t process_mc_GetPos(int argc, char *argv[]);
+
+//===== Define commands that will be supported by this module ====
+// GoTo command - absolute positioning
+cmdObj_t mc_GoTo = { "mc_GoTo", process_mc_GoTo, 0 };
+// Get Actual Position command - absolute position
+cmdObj_t mc_GetPos = { "mc_GetPos", process_mc_GetPos, 0 };
 
 static mcState_t mcState;
 static mcCmdData_t mcCmdData;
+static mcAxis_t firstAxis;
 
 
 //=========================================================================
 // Implements GoTo command - motor driver
 //
 //=========================================================================
-static int32_t process_sm_GoTo(int argc, char *argv[])
+static int32_t process_mc_GoTo(int argc, char *argv[])
 {
 	// TODO: check if argc == 2. If argc <> 2 then report an error
 
@@ -83,17 +94,53 @@ static int32_t process_sm_GoTo(int argc, char *argv[])
 }
 
 //=========================================================================
+// Implements Get Absolute Position command
+//
+// Note! This function returns position saved in this module and not
+// read actual position from drive chip. To be consistent after each
+// positioning or movement operation local axis position should be updated.
+// This implementation is chosen in order to minimize the commands sent to
+// chip if there is only an interrogation (e.g. check actual position).
+//=========================================================================
+static int32_t process_mc_GetPos(int argc, char *argv[])
+{
+	// TODO: check if argc == 2. If argc <> 2 then report an error
+
+    int32_t *p;
+
+    uint32_t n;
+
+    n = strlen(argv[1]);
+
+    p = (int32_t *) strtol(argv[1], NULL, 16);
+    *p = firstAxis.act_pos;
+
+    if (errno == ERANGE)
+    {
+    	errno = 0;
+    	// TODO: Add application level error handling
+
+    	return -1;
+    }
+
+	return 1;
+}
+
+//=========================================================================
 // Initialization function
 //
 // This function will register commands supported by this module
 //=========================================================================
-void stepper_ctrl_Init(void)
+void mcInit(void)
 {
 	// Register commands
-	cmdAddNewCommand(&sm_GoTo);
+	cmdAddNewCommand(&mc_GoTo);
+	cmdAddNewCommand(&mc_GetPos);
 
 	// Initialize state machine state
 	mcState = Idle;
+	// Initialize axis data
+	firstAxis.id = 0;
 }
 
 //=========================================================================
@@ -108,7 +155,7 @@ void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
 		case Idle:
             if (c->cmd == AbsPos)
             {
-            	BSP_MotorControl_GoTo(FIRST_AXIS, c->pos);
+            	BSP_MotorControl_GoTo(firstAxis.id, c->pos);
             	mcState = Movement_Positioning_Absolute;
             }
             else if (c->cmd == RelPos)
@@ -133,8 +180,11 @@ void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
             }
 			break;
 		case Movement_Positioning_Absolute:
-			if (INACTIVE == BSP_MotorControl_GetDeviceState(FIRST_AXIS))
+			if (INACTIVE == BSP_MotorControl_GetDeviceState(firstAxis.id))
 			{
+				// Get current position of device. Prepare for other components that needs this
+				firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id);
+
 				mcCmdData.cmd = NoCmd;
 				mcState = Idle;
 			}
@@ -159,7 +209,30 @@ void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
 
 }
 
-void stepper_ctrlFnc(uint32_t current_time)
+//=========================================================================
+// Provide drive status
+//
+// mcDriveReady - a new command could be executed
+// mcDriveBusy - a command execution is in progress, new commands not
+// accepted
+//=========================================================================
+mcDriveStatus_t mcGetDriverStatus(void)
+{
+	if (mcState == Idle)
+	{
+		return mcDriverReady;
+	}
+	else
+	{
+		return mcDriverBusy;
+	}
+}
+
+//=========================================================================
+// Main function of this code block
+//
+//=========================================================================
+void mcRecurrentFnc(uint32_t current_time)
 {
 	const uint32_t tsk_recr = 10;
 	static uint32_t elapsed_time = 0;
@@ -175,9 +248,8 @@ void stepper_ctrlFnc(uint32_t current_time)
 	    mcCmdData.dir = -1;
 	    mcCmdData.pos = 0;
 		stepper_ctrl_ProcessEvent(&mcCmdData);
-		// test recurrence
-		//BSP_LED_Toggle(LED2);
 
+		// store current time
 		prevoius_time = current_time;
 	}
 

@@ -47,14 +47,21 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define CMD_BUF_SIZE 32
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
  static volatile uint16_t gLastError;
  /* UART handler declaration */
  UART_HandleTypeDef UartHandle;
 
+ // Test string
  uint8_t string[15] = "Hello World!\n\r";
+ // Reusable command buffer
+ static char cmdBuf[CMD_BUF_SIZE];
+ // Store actual time in system ticks
  uint32_t currentTime;
+// Store actual position of the axis
+ static int32_t actPos;
 
 /* Private function prototypes -----------------------------------------------*/
 static void MyFlagInterruptHandler(void);
@@ -91,7 +98,8 @@ int main(void)
 
   uart2_Init();
 
-  stepper_ctrl_Init();
+  // Should be after BSP_MotorControl_Init() because reads data from motor driver
+  mcInit();
 
 //  BSP_LED_Init(LED2);
 
@@ -120,7 +128,7 @@ int main(void)
 //   volatile uint32_t param = BSP_MotorControl_CmdGetParam(0, L6474_TVAL);
 
    // Testing commands to motor driver
-   cmdProcessCommand("sm_GoTo -60000");
+   cmdProcessCommand("mc_GoTo 20000");
 
    /* Infinite loop */
    while(1)
@@ -128,12 +136,15 @@ int main(void)
 	   // Get actual time (in miliseconds)
 	   currentTime = HAL_GetTick();
 
-	   // Testing commands to motor driver
-	   //cmdProcessCommand("sm_GoTo -60000");
-	   //BSP_MotorControl_GoTo(0,60000);
+	   if (mcDriverReady == mcGetDriverStatus())
+	   {
+		   // Return motor Actual Position in variable "actPos", command is "mc_GetPos &actPos"
+		   snprintf(cmdBuf, CMD_BUF_SIZE, "mc_GetPos %p", &actPos);
+		   cmdProcessCommand(cmdBuf);
+	   }
 
 	   // Call stepper motor control function
-	   stepper_ctrlFnc(currentTime);
+	   mcRecurrentFnc(currentTime);
 
 //	   uart2_Transmit(string, sizeof(string));
    }

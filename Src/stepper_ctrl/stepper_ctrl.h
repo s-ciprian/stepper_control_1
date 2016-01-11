@@ -7,9 +7,15 @@ extern "C"
 {
 #endif
 
+typedef enum _mcDriveStatus_t
+{
+	mcDriverReady,
+	mcDriverBusy
+} mcDriveStatus_t;
 
-void stepper_ctrl_Init(void);
-void stepper_ctrlFnc(uint32_t current_time);
+void mcInit(void);
+void mcRecurrentFnc(uint32_t current_time);
+mcDriveStatus_t mcGetDriverStatus(void);
 
 
 #ifdef __cplusplus
