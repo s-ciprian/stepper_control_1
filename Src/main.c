@@ -63,6 +63,9 @@
 // Store actual position of the axis
  static int32_t actPos;
 
+
+ static GPIO_PinState btnOldVal;
+
 /* Private function prototypes -----------------------------------------------*/
 static void MyFlagInterruptHandler(void);
 
@@ -83,6 +86,8 @@ int main(void)
   
   /* Configure the system clock */
   SystemClock_Config();
+
+  BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
     
 //----- Init of the Motor control library 
   /* Start the L6474 library to use 1 device */
@@ -128,7 +133,10 @@ int main(void)
 //   volatile uint32_t param = BSP_MotorControl_CmdGetParam(0, L6474_TVAL);
 
    // Testing commands to motor driver
-   cmdProcessCommand("mc_GoTo 20000");
+   //ExecuteCommand("mc_GoTo 20000");
+   //ExecuteCommand("mc_Run FW");
+
+   btnOldVal = BSP_PB_GetState(BUTTON_USER);
 
    /* Infinite loop */
    while(1)
@@ -136,12 +144,43 @@ int main(void)
 	   // Get actual time (in miliseconds)
 	   currentTime = HAL_GetTick();
 
+	   ////////////////////////////////////////////////////////////////////
+	   // Button (blue button on Nucleo401RE) - press detection and logics
+	   ////////////////////////////////////////////////////////////////////
+	   static uint32_t btnCnt = 0;
+
+	   if ( (BSP_PB_GetState(BUTTON_USER) == GPIO_PIN_RESET) &&
+			(btnOldVal == GPIO_PIN_SET) )
+	   {
+		   btnCnt++;
+	   }
+	   btnOldVal = BSP_PB_GetState(BUTTON_USER);
+	   ////////////////////////////////////////////////////////////////////
+
+	   //////////////////////////////////////////////////////////////
+	   // Test sequence - motor control
+	   //////////////////////////////////////////////////////////////
 	   if (mcDriverReady == mcGetDriverStatus())
 	   {
 		   // Return motor Actual Position in variable "actPos", command is "mc_GetPos &actPos"
 		   snprintf(cmdBuf, CMD_BUF_SIZE, "mc_GetPos %p", &actPos);
-		   cmdProcessCommand(cmdBuf);
+		   ExecuteCommand(cmdBuf);
+
+		   if(btnCnt == 1)
+		   {
+			   ExecuteCommand("mc_Run FW");
+		   }
 	   }
+	   else if (mcDriveJogging == mcGetDriverStatus())
+	   {
+		   if(btnCnt == 2)
+		   {
+			   ExecuteCommand("mc_Stop Soft");
+		   }
+	   }
+
+	   if (btnCnt >= 2) {btnCnt = 0;}
+	   //////////////////////////////////////////////////////////////
 
 	   // Call stepper motor control function
 	   mcRecurrentFnc(currentTime);

@@ -54,7 +54,7 @@ static int cmdParseCommand(char *cmdBuf);
 // In case of success (function associated with command is executed), returns
 // the code returned by command function
 //*****************************************************************************
-int cmdProcessCommand(char *cmdBuf)
+int ExecuteCommand(char *cmdBuf)
 {
 	int ret = 0;
 

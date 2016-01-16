@@ -1,5 +1,8 @@
 # At initialization read actual position from driver chip. Actual code set to 0 actual position variable.
 
-# Protect command that is in execution (do not let a new command to override it). To do this, a new command could be registered only if the sw motor controller is in Idle state (add this condition each time a command is written)
-
 # Implement error handler because there are too many places where the error is to be generated.
+
+#10:39 PM 1/16/2016 Check function void L6474_StepClockHandler(uint8_t deviceId). After reset alway execute a hard stop even the command is
+to execute a soft stop. This condition (relativePos >= devicePrm[deviceId].stepsToTake) is true first time after Reset.
+Test is done using User Button (blue button). First press motor is running then second press motor is soft stop. Fail firs time after reset
+to take a soft stop.

@@ -10,6 +10,7 @@ extern "C"
 typedef enum _mcDriveStatus_t
 {
 	mcDriverReady,
+	mcDriveJogging,
 	mcDriverBusy
 } mcDriveStatus_t;
 

@@ -37,7 +37,7 @@ typedef struct _cmdObj
 //*****************************************************************************
 // Prototypes for the APIs.
 //*****************************************************************************
-extern int cmdProcessCommand(char *cmdBuf);
+extern int ExecuteCommand(char *cmdBuf);
 
 int cmdAddNewCommand(cmdObj_t *newCmd);
 

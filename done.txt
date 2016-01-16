@@ -1,0 +1,2 @@
+
+#3:06 PM 1/16/2016 Protect command that is in execution (do not let a new command to override it). To do this, a new command could be registered only if the sw motor controller is in Idle state (add this condition each time a command is written)
