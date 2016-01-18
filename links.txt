@@ -1,0 +1,11 @@
+
+# Temperature sensor:
+https://learn.adafruit.com/adafruit-mcp9808-precision-i2c-temperature-sensor-guide/overview
+
+# Optional (GSM shield)
+http://ro.rsdelivers.com/product/arduino/a000105/gsm-shield-2-integrated-antenna/8659010.aspx?query=8659010
+
+
+#
+http://visualgdb.com
+http://visualgdb.com/tutorials/arm/livevars/
