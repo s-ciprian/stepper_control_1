@@ -8,7 +8,7 @@ extern "C"
 {
 #endif
 
-inline uint32_t timeDiff(uint32_t ct, uint32_t pt);
+uint32_t timeDiff(uint32_t ct, uint32_t pt);
 
 #ifdef __cplusplus
 }
