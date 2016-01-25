@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{c42dfc3c-bf2c-4359-9caa-eda15700b9db}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header files">
+      <UniqueIdentifier>{5a249d33-274a-4cf4-9b31-94c1060b045e}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource files">
+      <UniqueIdentifier>{8b7d8f9e-2851-4567-94be-6176c467d49f}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Make files">
+      <UniqueIdentifier>{4e7d5e50-27c9-459d-b084-3d1bab8c2375}</UniqueIdentifier>
+      <Extensions>*.mak</Extensions>
+    </Filter>
+    <Filter Include="Source files\Device-specific files">
+      <UniqueIdentifier>{ae8b94aa-09e3-49e2-8de9-d6e4db7d4fdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\Device-specific files">
+      <UniqueIdentifier>{310b7dec-e6cc-4722-a55c-108479f015fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\BSP">
+      <UniqueIdentifier>{0432bc8f-36cc-4420-bd86-bd799141cd2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\HAL_Driver">
+      <UniqueIdentifier>{790e01b0-b7ec-469f-ae4f-f68b83fad98b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\BSP">
+      <UniqueIdentifier>{6bc03101-0dd1-4eed-82fa-5039ee4c813b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\HAL_Driver">
+      <UniqueIdentifier>{982f128e-e9fc-4f56-b416-9b635d604248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\App">
+      <UniqueIdentifier>{fdf0760f-71b7-44c2-a372-9d773b2af512}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\App">
+      <UniqueIdentifier>{04176aaa-7839-48a1-95be-c217d0a1af2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\App\cmd">
+      <UniqueIdentifier>{7594e3a4-ec54-4ed3-90b8-5710f00851dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\App\sch_hlp">
+      <UniqueIdentifier>{a46a275f-a625-4700-b3c7-41aa31740b2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\App\stepper_controller">
+      <UniqueIdentifier>{7f92c5ed-adba-4b7b-abe3-796f794c5604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\App\comm">
+      <UniqueIdentifier>{caed0ae0-070c-4ec5-b8e9-b8dd27f4e556}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="system_stm32f4xx.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ciprian\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\StartupFiles\startup_stm32f401xe.c">
+      <Filter>Source files\Device-specific files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\BSP\Components\l6474\l6474.c">
+      <Filter>Source files\BSP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\BSP\MotorControl\motorcontrol.c">
+      <Filter>Source files\BSP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\BSP\STM32F4xx-Nucleo\stm32f4xx_nucleo.c">
+      <Filter>Source files\BSP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\BSP\STM32F4xx-Nucleo\stm32f4xx_nucleo_ihm01a1.c">
+      <Filter>Source files\BSP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c">
+      <Filter>Source files\HAL_Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c">
+      <Filter>Source files\HAL_Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c">
+      <Filter>Source files\HAL_Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c">
+      <Filter>Source files\HAL_Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c">
+      <Filter>Source files\HAL_Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c">
+      <Filter>Source files\HAL_Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c">
+      <Filter>Source files\HAL_Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.c">
+      <Filter>Source files\HAL_Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c">
+      <Filter>Source files\HAL_Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash.c">
+      <Filter>Source files\HAL_Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash_ex.c">
+      <Filter>Source files\HAL_Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\cmd\cmd.c">
+      <Filter>Source files\App\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\stepper_ctrl\stepper_ctrl.c">
+      <Filter>Source files\App\stepper_controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\scheduler\sch_hlp.c">
+      <Filter>Source files\App\sch_hlp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\clock_f4.c">
+      <Filter>Source files\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\main.c">
+      <Filter>Source files\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\stm32f4xx_hal_msp.c">
+      <Filter>Source files\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\stm32f4xx_it.c">
+      <Filter>Source files\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\comm\uart2.c">
+      <Filter>Source files\App\comm</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stm32f4xx_hal_conf.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\BSP\Components\l6474\l6474.h">
+      <Filter>Header files\BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\BSP\Components\l6474\l6474_target_config.h">
+      <Filter>Header files\BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\BSP\Components\Common\motor.h">
+      <Filter>Header files\BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\BSP\MotorControl\motorcontrol.h">
+      <Filter>Header files\BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\BSP\STM32F4xx-Nucleo\stm32f4xx_nucleo.h">
+      <Filter>Header files\BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\BSP\STM32F4xx-Nucleo\stm32f4xx_nucleo_ihm01a1.h">
+      <Filter>Header files\BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h">
+      <Filter>Header files\HAL_Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_cortex.h">
+      <Filter>Header files\HAL_Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash.h">
+      <Filter>Header files\HAL_Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ex.h">
+      <Filter>Header files\HAL_Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_gpio.h">
+      <Filter>Header files\HAL_Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc_ex.h">
+      <Filter>Header files\HAL_Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spi.h">
+      <Filter>Header files\HAL_Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h">
+      <Filter>Header files\HAL_Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h">
+      <Filter>Header files\HAL_Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h">
+      <Filter>Header files\HAL_Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\cmd\cmd.h">
+      <Filter>Source files\App\cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\stepper_ctrl\stepper_ctrl.h">
+      <Filter>Source files\App\stepper_controller</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\scheduler\sch_hlp.h">
+      <Filter>Source files\App\sch_hlp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Inc\main.h">
+      <Filter>Header files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Inc\stm32f4xx_it.h">
+      <Filter>Header files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\comm\uart2.h">
+      <Filter>Source files\App\comm</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+    <None Include="debug.mak">
+      <Filter>Make files</Filter>
+    </None>
+    <None Include="release.mak">
+      <Filter>Make files</Filter>
+    </None>
+    <None Include="stm32.mak">
+      <Filter>Source files\Device-specific files</Filter>
+    </None>
+  </ItemGroup>
+</Project>
