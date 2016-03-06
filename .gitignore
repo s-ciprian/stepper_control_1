@@ -98,3 +98,11 @@ VisualGdb/heatCtrl/heatCtrl.vcxproj.filters
 VisualGdb/heatCtrl/release.mak
 VisualGdb/heatCtrl/stm32.mak
 VisualGdb/heatCtrl/stm32.xml
+*.o
+*.npa
+*.npd
+*.dep
+*.cd
+*.ast
+*.psf
+*.rdb
