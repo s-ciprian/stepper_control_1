@@ -36,6 +36,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+#include <../CMSIS_RTOS/cmsis_os.h>
 #include "main.h"
 #include "uart2.h"
 #include "stepper_ctrl.h"
@@ -69,6 +70,7 @@
 /* Private function prototypes -----------------------------------------------*/
 static void MyFlagInterruptHandler(void);
 void Init_User_GPIO(void);
+static void LED_Thread1(void *argument);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -88,8 +90,20 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-  BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
-  Init_User_GPIO();
+	Init_User_GPIO();
+	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+////////////////////////////////////////
+	// Test Thread
+	xTaskCreate(LED_Thread1, "LED1", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+
+	//printf("StartScheduler()\n");
+	/* Start scheduler */
+	vTaskStartScheduler();	
+///////////////////////////////////////
+	
+	
+  //BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+  //Init_User_GPIO();
     
 //----- Init of the Motor control library 
   /* Start the L6474 library to use 1 device */
@@ -171,7 +185,7 @@ int main(void)
 		   if(btnCnt == 1)
 		   {
 			   ExecuteCommand("mc_Run FW");
-			   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+			   //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
 		   }
 	   }
 	   else if (mcDriveJogging == mcGetDriverStatus())
@@ -179,7 +193,7 @@ int main(void)
 		   if(btnCnt == 2)
 		   {
 			   ExecuteCommand("mc_Stop Soft");
-			   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+			   //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
 		   }
 	   }
 
@@ -525,6 +539,9 @@ void originalTestCode(void)
 	  HAL_Delay(2000);
 }
 
+/**
+  *
+  */
 void Init_User_GPIO(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -538,7 +555,33 @@ void Init_User_GPIO(void)
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
-
+/**
+  * @brief  Toggle LED1
+  * @param  thread not used
+  * @retval None
+  */
+static void LED_Thread1(void *argument)
+{
+	(void) argument;
+	portTickType xLastWakeTime;
+	
+	xLastWakeTime = xTaskGetTickCount();
+	
+	for (;;)
+	{	
+		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+		//osDelay(500);
+		//
+		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+		////osThreadSuspend(LEDThread2Handle);
+		//osDelay(500);
+		////printf("L2\n");
+		
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
+		
+		vTaskDelayUntil(&xLastWakeTime, (500 / portTICK_RATE_MS));
+	}
+}
 
 /**
   * @}
