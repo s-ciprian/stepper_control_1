@@ -58,9 +58,6 @@
     <ClCompile Include="system_stm32f4xx.c">
       <Filter>Source files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\ciprian\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\StartupFiles\startup_stm32f401xe.c">
-      <Filter>Source files\Device-specific files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Drivers\BSP\Components\l6474\l6474.c">
       <Filter>Source files\BSP</Filter>
     </ClCompile>
@@ -129,6 +126,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Src\comm\uart2.c">
       <Filter>Source files\App\comm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\StartupFiles\startup_stm32f401xe.c">
+      <Filter>Source files\Device-specific files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

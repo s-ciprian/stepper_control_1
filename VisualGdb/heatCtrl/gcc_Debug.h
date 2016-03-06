@@ -1080,14 +1080,6 @@
 #endif
 
 // --- Include directories begin --- //
-//.
-//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/../../../../arm-eabi/include/c++/5.3.0
-//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/../../../../arm-eabi/include/c++/5.3.0/arm-eabi/thumb/fpu/cortex_m4
-//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/../../../../arm-eabi/include/c++/5.3.0/backward
-//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/include
-//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/include-fixed
-//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/../../../../arm-eabi/sys-include
-//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/../../../../arm-eabi/include
 //../../Drivers/BSP/Components/l6474
 //../../Drivers/BSP/MotorControl
 //../../Drivers/BSP/STM32F4xx-Nucleo
@@ -1099,6 +1091,14 @@
 //../../Src/comm
 //../../Src/scheduler
 //../../Src/stepper_ctrl
+//.
+//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/../../../../arm-eabi/include/c++/5.3.0
+//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/../../../../arm-eabi/include/c++/5.3.0/arm-eabi/thumb/fpu/cortex_m4
+//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/../../../../arm-eabi/include/c++/5.3.0/backward
+//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/include
+//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/include-fixed
+//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/../../../../arm-eabi/sys-include
+//c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/../../../../arm-eabi/include
 // --- Include directories end --- //
 
 

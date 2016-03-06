@@ -35,7 +35,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeIncludeSearchPath>.;c:\sysgcc\arm-eabi\arm-eabi\include\c++\5.3.0;c:\sysgcc\arm-eabi\arm-eabi\include\c++\5.3.0\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\5.3.0\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\5.3.0\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\5.3.0\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;../../Drivers/BSP/Components/l6474;../../Drivers/BSP/MotorControl;../../Drivers/BSP/STM32F4xx-Nucleo;../../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../../Drivers/CMSIS/Include;../../Drivers/STM32F4xx_HAL_Driver/Inc;../../Inc;../../Src/cmd;../../Src/comm;../../Src/scheduler;../../Src/stepper_ctrl;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>../../Drivers/BSP/Components/l6474;../../Drivers/BSP/MotorControl;../../Drivers/BSP/STM32F4xx-Nucleo;../../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../../Drivers/CMSIS/Include;../../Drivers/STM32F4xx_HAL_Driver/Inc;../../Inc;../../Src/cmd;../../Src/comm;../../Src/scheduler;../../Src/stepper_ctrl;.;c:\sysgcc\arm-eabi\arm-eabi\include\c++\5.3.0;c:\sysgcc\arm-eabi\arm-eabi\include\c++\5.3.0\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\5.3.0\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\5.3.0\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\5.3.0\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\stm32_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
@@ -61,6 +61,7 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\StartupFiles\startup_stm32f401xe.c" />
     <ClCompile Include="..\..\Drivers\BSP\Components\l6474\l6474.c" />
     <ClCompile Include="..\..\Drivers\BSP\MotorControl\motorcontrol.c" />
     <ClCompile Include="..\..\Drivers\BSP\STM32F4xx-Nucleo\stm32f4xx_nucleo.c" />
@@ -84,7 +85,6 @@
     <ClCompile Include="..\..\Src\stepper_ctrl\stepper_ctrl.c" />
     <ClCompile Include="..\..\Src\stm32f4xx_hal_msp.c" />
     <ClCompile Include="..\..\Src\stm32f4xx_it.c" />
-    <ClCompile Include="C:\Users\ciprian\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\StartupFiles\startup_stm32f401xe.c" />
     <ClCompile Include="system_stm32f4xx.c" />
   </ItemGroup>
   <ItemGroup>

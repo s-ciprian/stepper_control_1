@@ -68,6 +68,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 static void MyFlagInterruptHandler(void);
+void Init_User_GPIO(void);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -88,6 +89,7 @@ int main(void)
   SystemClock_Config();
 
   BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+  Init_User_GPIO();
     
 //----- Init of the Motor control library 
   /* Start the L6474 library to use 1 device */
@@ -169,6 +171,7 @@ int main(void)
 		   if(btnCnt == 1)
 		   {
 			   ExecuteCommand("mc_Run FW");
+			   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
 		   }
 	   }
 	   else if (mcDriveJogging == mcGetDriverStatus())
@@ -176,6 +179,7 @@ int main(void)
 		   if(btnCnt == 2)
 		   {
 			   ExecuteCommand("mc_Stop Soft");
+			   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
 		   }
 	   }
 
@@ -301,7 +305,9 @@ void assert_failed(uint8_t* file, uint32_t line)
 }
 #endif
 
-
+/**
+  *
+  */
 void originalTestCode(void)
 {
 	int32_t pos;
@@ -518,6 +524,20 @@ void originalTestCode(void)
 	  /* Wait for 2 seconds */
 	  HAL_Delay(2000);
 }
+
+void Init_User_GPIO(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	
+	// Led Output connected on CN8-A0 (PA0)
+	__GPIOA_CLK_ENABLE();
+	GPIO_InitStructure.Pin = GPIO_PIN_0;
+	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
+	GPIO_InitStructure.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
+}
+
 
 
 /**
