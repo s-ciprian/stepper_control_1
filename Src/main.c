@@ -71,6 +71,7 @@
 static void MyFlagInterruptHandler(void);
 void Init_User_GPIO(void);
 static void LED_Thread1(void *argument);
+static void Motor_Controller(void *argument);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -95,47 +96,18 @@ int main(void)
 ////////////////////////////////////////
 	// Test Thread
 	xTaskCreate(LED_Thread1, "LED1", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(Motor_Controller, "MC", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 
 	//printf("StartScheduler()\n");
 	/* Start scheduler */
 	vTaskStartScheduler();	
 ///////////////////////////////////////
-	
-	
-  //BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
-  //Init_User_GPIO();
-    
-//----- Init of the Motor control library 
-  /* Start the L6474 library to use 1 device */
-  /* The L6474 registers are set with the predefined values */
-  /* from file l6474_target_config.h*/
-  BSP_MotorControl_Init(BSP_MOTOR_CONTROL_BOARD_ID_L6474, 1);
-  
-  /* Attach the function MyFlagInterruptHandler (defined below) to the flag interrupt */
-  BSP_MotorControl_AttachFlagInterrupt(MyFlagInterruptHandler);
-
-  /* Attach the function Error_Handler (defined below) to the error Handler*/
-  BSP_MotorControl_AttachErrorHandler(Error_Handler);
 
   uart2_Init();
-
-  // Should be after BSP_MotorControl_Init() because reads data from motor driver
-  mcInit();
-
-//  BSP_LED_Init(LED2);
 
   uart2_Transmit(string, sizeof(string));
 
   // old code moved in function void originalTestCode(void)
-
-  /* Reset device 0 to 1/x microstepping mode */
-  BSP_MotorControl_SelectStepMode(0, STEP_MODE_1_8);
-
-  /* Update speed, acceleration, deceleration for 1/x microstepping mode*/
-  BSP_MotorControl_SetMaxSpeed(0,3600);
-  BSP_MotorControl_SetMinSpeed(0,100);
-  BSP_MotorControl_SetAcceleration(0,1600);
-  BSP_MotorControl_SetDeceleration(0,1600);
 
    // Cip - Testing
    /* Select full step mode for device 0 */
@@ -199,9 +171,6 @@ int main(void)
 
 	   if (btnCnt >= 2) {btnCnt = 0;}
 	   //////////////////////////////////////////////////////////////
-
-	   // Call stepper motor control function
-	   mcRecurrentFnc(currentTime);
 
 //	   uart2_Transmit(string, sizeof(string));
    }
@@ -581,6 +550,48 @@ static void LED_Thread1(void *argument)
 		
 		vTaskDelayUntil(&xLastWakeTime, (500 / portTICK_RATE_MS));
 	}
+}
+
+/**
+  *
+  */
+
+static void Motor_Controller(void *argument)
+{
+	portTickType xLastWakeTime;
+	
+    //----- Init of the Motor control library 
+    /* Start the L6474 library to use 1 device */
+    /* The L6474 registers are set with the predefined values */
+    /* from file l6474_target_config.h*/
+	BSP_MotorControl_Init(BSP_MOTOR_CONTROL_BOARD_ID_L6474, 1);
+  
+	/* Attach the function MyFlagInterruptHandler (defined below) to the flag interrupt */
+	BSP_MotorControl_AttachFlagInterrupt(MyFlagInterruptHandler);
+
+	  /* Attach the function Error_Handler (defined below) to the error Handler*/
+	BSP_MotorControl_AttachErrorHandler(Error_Handler);	
+	
+    // Should be after BSP_MotorControl_Init() because reads data from motor driver
+	mcInit();
+	
+	xLastWakeTime = xTaskGetTickCount();
+	
+	  /* Reset device 0 to 1/x microstepping mode */
+	BSP_MotorControl_SelectStepMode(0, STEP_MODE_1_8);
+
+	/* Update speed, acceleration, deceleration for 1/x microstepping mode*/
+	BSP_MotorControl_SetMaxSpeed(0, 3600);
+	BSP_MotorControl_SetMinSpeed(0, 100);
+	BSP_MotorControl_SetAcceleration(0, 1600);
+	BSP_MotorControl_SetDeceleration(0, 1600);
+	
+	for (;;)
+	{
+		ExecuteCommand("mc_Run FW");
+		mcRecurrentFnc(0);
+		vTaskDelayUntil(&xLastWakeTime, (1000 / portTICK_RATE_MS));
+	}	
 }
 
 /**

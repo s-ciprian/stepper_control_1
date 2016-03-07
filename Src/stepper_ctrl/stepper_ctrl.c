@@ -392,15 +392,15 @@ static inline void mcMovementEnding(void)
 //=========================================================================
 void mcRecurrentFnc(uint32_t current_time)
 {
-	const uint32_t tsk_recr = 10;
-	static uint32_t elapsed_time = 0;
-	static uint32_t prevoius_time = 0;
+	//const uint32_t tsk_recr = 10;
+	//static uint32_t elapsed_time = 0;
+	//static uint32_t prevoius_time = 0;
+//
+//
+	//elapsed_time = timeDiff(current_time, prevoius_time);
 
-
-	elapsed_time = timeDiff(current_time, prevoius_time);
-
-	if (elapsed_time >= tsk_recr)
-	{
+//	if (elapsed_time >= tsk_recr)
+//	{
 		// call here function "stepper_ctrl_ProcessEvent"
 	    mcCmdData.cmd = Tick;
 	    mcCmdData.dir = -1;
@@ -408,6 +408,6 @@ void mcRecurrentFnc(uint32_t current_time)
 		stepper_ctrl_ProcessEvent(&mcCmdData);
 
 		// store current time
-		prevoius_time = current_time;
-	}
+//		prevoius_time = current_time;
+//	}
 }
