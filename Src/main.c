@@ -82,18 +82,15 @@ static void Motor_Controller(void *argument);
   */
 int main(void)
 {
-  // int32_t pos;
-  // uint16_t mySpeed;
-
-  /* STM32xx HAL library initialization */
-  HAL_Init();
+	/* STM32xx HAL library initialization */
+	HAL_Init();
   
-  /* Configure the system clock */
-  SystemClock_Config();
+	/* Configure the system clock */
+	SystemClock_Config();
 
 	Init_User_GPIO();
 	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
-////////////////////////////////////////
+	////////////////////////////////////////
 	// Test Thread
 	xTaskCreate(LED_Thread1, "LED1", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(Motor_Controller, "MC", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
@@ -101,18 +98,18 @@ int main(void)
 	//printf("StartScheduler()\n");
 	/* Start scheduler */
 	vTaskStartScheduler();	
-///////////////////////////////////////
+	///////////////////////////////////////
 
-  uart2_Init();
+	uart2_Init();
 
-  uart2_Transmit(string, sizeof(string));
+	uart2_Transmit(string, sizeof(string));
 
-  // old code moved in function void originalTestCode(void)
+    // old code moved in function void originalTestCode(void)
 
-   // Cip - Testing
-   /* Select full step mode for device 0 */
+    // Cip - Testing
+    /* Select full step mode for device 0 */
 //   BSP_MotorControl_SelectStepMode(0, STEP_MODE_FULL);
-   /* Update speed, acceleration, deceleration for */
+    /* Update speed, acceleration, deceleration for */
 //   BSP_MotorControl_SetMaxSpeed(0, 3200);
 //   BSP_MotorControl_SetMinSpeed(0, 400);
 //   BSP_MotorControl_SetAcceleration(0, 1600);
@@ -120,60 +117,56 @@ int main(void)
 
 //   volatile uint32_t param = BSP_MotorControl_CmdGetParam(0, L6474_TVAL);
 
-   // Testing commands to motor driver
-   //ExecuteCommand("mc_GoTo 20000");
-   //ExecuteCommand("mc_Run FW");
+    btnOldVal = BSP_PB_GetState(BUTTON_USER);
 
-   btnOldVal = BSP_PB_GetState(BUTTON_USER);
+    /* Infinite loop */
+    while(1)
+    {
+		// Get actual time (in miliseconds)
+		currentTime = HAL_GetTick();
 
-   /* Infinite loop */
-   while(1)
-   {
-	   // Get actual time (in miliseconds)
-	   currentTime = HAL_GetTick();
+		////////////////////////////////////////////////////////////////////
+		// Button (blue button on Nucleo401RE) - press detection and logics
+		////////////////////////////////////////////////////////////////////
+		static uint32_t btnCnt = 0;
 
-	   ////////////////////////////////////////////////////////////////////
-	   // Button (blue button on Nucleo401RE) - press detection and logics
-	   ////////////////////////////////////////////////////////////////////
-	   static uint32_t btnCnt = 0;
-
-	   if ( (BSP_PB_GetState(BUTTON_USER) == GPIO_PIN_RESET) &&
+		if ( (BSP_PB_GetState(BUTTON_USER) == GPIO_PIN_RESET) &&
 			(btnOldVal == GPIO_PIN_SET) )
-	   {
-		   btnCnt++;
-	   }
-	   btnOldVal = BSP_PB_GetState(BUTTON_USER);
-	   ////////////////////////////////////////////////////////////////////
+		{
+			btnCnt++;
+		}
+		btnOldVal = BSP_PB_GetState(BUTTON_USER);
+		////////////////////////////////////////////////////////////////////
 
-	   //////////////////////////////////////////////////////////////
-	   // Test sequence - motor control
-	   //////////////////////////////////////////////////////////////
-	   if (mcDriverReady == mcGetDriverStatus())
-	   {
-		   // Return motor Actual Position in variable "actPos", command is "mc_GetPos &actPos"
-		   snprintf(cmdBuf, CMD_BUF_SIZE, "mc_GetPos %p", &actPos);
-		   ExecuteCommand(cmdBuf);
+		//////////////////////////////////////////////////////////////
+		// Test sequence - motor control
+		//////////////////////////////////////////////////////////////
+		if (mcDriverReady == mcGetDriverStatus())
+		{
+			// Return motor Actual Position in variable "actPos", command is "mc_GetPos &actPos"
+			snprintf(cmdBuf, CMD_BUF_SIZE, "mc_GetPos %p", &actPos);
+			ExecuteCommand(cmdBuf);
 
-		   if(btnCnt == 1)
-		   {
-			   ExecuteCommand("mc_Run FW");
-			   //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
-		   }
-	   }
-	   else if (mcDriveJogging == mcGetDriverStatus())
-	   {
-		   if(btnCnt == 2)
-		   {
-			   ExecuteCommand("mc_Stop Soft");
-			   //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
-		   }
-	   }
+			if(btnCnt == 1)
+			{
+				ExecuteCommand("mc_Run FW");
+				//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+			}
+		}
+		else if (mcDriveJogging == mcGetDriverStatus())
+		{
+			if(btnCnt == 2)
+			{
+				ExecuteCommand("mc_Stop Soft");
+				//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+			}
+		}
 
-	   if (btnCnt >= 2) {btnCnt = 0;}
-	   //////////////////////////////////////////////////////////////
+		if (btnCnt >= 2) {btnCnt = 0;}
+		//////////////////////////////////////////////////////////////
 
-//	   uart2_Transmit(string, sizeof(string));
-   }
+		//	   uart2_Transmit(string, sizeof(string));
+	}
 }
 
 /**
@@ -183,72 +176,71 @@ int main(void)
   */
 void MyFlagInterruptHandler(void)
 {
-  /* Get the value of the status register via the L6474 command GET_STATUS */
-  uint16_t statusRegister = BSP_MotorControl_CmdGetStatus(0);
+	/* Get the value of the status register via the L6474 command GET_STATUS */
+	uint16_t statusRegister = BSP_MotorControl_CmdGetStatus(0);
   
-  /* Check HIZ flag: if set, power brigdes are disabled */
-  if ((statusRegister & L6474_STATUS_HIZ) == L6474_STATUS_HIZ)
-  {
-    // HIZ state
-    // Action to be customized            
-  }
+	/* Check HIZ flag: if set, power brigdes are disabled */
+	if ((statusRegister & L6474_STATUS_HIZ) == L6474_STATUS_HIZ)
+	{
+	// HIZ state
+	// Action to be customized            
+	}
 
-  /* Check direction bit */
-  if ((statusRegister & L6474_STATUS_DIR) == L6474_STATUS_DIR)
-  {
-    // Forward direction is set
-    // Action to be customized            
-  }  
-  else
-  {
-    // Backward direction is set
-    // Action to be customized            
-  }  
+	/* Check direction bit */
+	if ((statusRegister & L6474_STATUS_DIR) == L6474_STATUS_DIR)
+	{
+	// Forward direction is set
+	// Action to be customized            
+	}  
+	else
+	{
+	// Backward direction is set
+	// Action to be customized            
+	}  
 
-  /* Check NOTPERF_CMD flag: if set, the command received by SPI can't be performed */
-  /* This often occures when a command is sent to the L6474 */
-  /* while it is in HIZ state */
-  if ((statusRegister & L6474_STATUS_NOTPERF_CMD) == L6474_STATUS_NOTPERF_CMD)
-  {
-      // Command received by SPI can't be performed
-     // Action to be customized            
-  }  
+	/* Check NOTPERF_CMD flag: if set, the command received by SPI can't be performed */
+	/* This often occures when a command is sent to the L6474 */
+	/* while it is in HIZ state */
+	if ((statusRegister & L6474_STATUS_NOTPERF_CMD) == L6474_STATUS_NOTPERF_CMD)
+	{
+		// Command received by SPI can't be performed
+		// Action to be customized            
+	}  
 
-  /* Check WRONG_CMD flag: if set, the command does not exist */
-  if ((statusRegister & L6474_STATUS_WRONG_CMD) == L6474_STATUS_WRONG_CMD)
-  {
-     //command received by SPI does not exist 
-     // Action to be customized          
-  }  
+	/* Check WRONG_CMD flag: if set, the command does not exist */
+	if ((statusRegister & L6474_STATUS_WRONG_CMD) == L6474_STATUS_WRONG_CMD)
+	{
+		//command received by SPI does not exist 
+		// Action to be customized          
+	}  
 
-  /* Check UVLO flag: if not set, there is an undervoltage lock-out */
-  if ((statusRegister & L6474_STATUS_UVLO) == 0)
-  {
-     //undervoltage lock-out 
-     // Action to be customized          
-  }  
+	/* Check UVLO flag: if not set, there is an undervoltage lock-out */
+	if ((statusRegister & L6474_STATUS_UVLO) == 0)
+	{
+		//undervoltage lock-out 
+		// Action to be customized          
+	}  
 
-  /* Check TH_WRN flag: if not set, the thermal warning threshold is reached */
-  if ((statusRegister & L6474_STATUS_TH_WRN) == 0)
-  {
-    //thermal warning threshold is reached
-    // Action to be customized          
-  }    
+	/* Check TH_WRN flag: if not set, the thermal warning threshold is reached */
+	if ((statusRegister & L6474_STATUS_TH_WRN) == 0)
+	{
+	//thermal warning threshold is reached
+	// Action to be customized          
+	}    
 
-  /* Check TH_SHD flag: if not set, the thermal shut down threshold is reached */
-  if ((statusRegister & L6474_STATUS_TH_SD) == 0)
-  {
-    //thermal shut down threshold is reached 
-    // Action to be customized          
-  }    
+	/* Check TH_SHD flag: if not set, the thermal shut down threshold is reached */
+	if ((statusRegister & L6474_STATUS_TH_SD) == 0)
+	{
+	//thermal shut down threshold is reached 
+	// Action to be customized          
+	}    
 
-  /* Check OCD  flag: if not set, there is an overcurrent detection */
-  if ((statusRegister & L6474_STATUS_OCD) == 0)
-  {
-    //overcurrent detection 
-    // Action to be customized          
-  }      
- 
+	/* Check OCD  flag: if not set, there is an overcurrent detection */
+	if ((statusRegister & L6474_STATUS_OCD) == 0)
+	{
+	//overcurrent detection 
+	// Action to be customized          
+	}      
 }
 
 /**
@@ -537,15 +529,7 @@ static void LED_Thread1(void *argument)
 	xLastWakeTime = xTaskGetTickCount();
 	
 	for (;;)
-	{	
-		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
-		//osDelay(500);
-		//
-		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
-		////osThreadSuspend(LEDThread2Handle);
-		//osDelay(500);
-		////printf("L2\n");
-		
+	{
 		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
 		
 		vTaskDelayUntil(&xLastWakeTime, (500 / portTICK_RATE_MS));
@@ -555,7 +539,6 @@ static void LED_Thread1(void *argument)
 /**
   *
   */
-
 static void Motor_Controller(void *argument)
 {
 	portTickType xLastWakeTime;
@@ -586,17 +569,13 @@ static void Motor_Controller(void *argument)
 	BSP_MotorControl_SetAcceleration(0, 1600);
 	BSP_MotorControl_SetDeceleration(0, 1600);
 	
+	ExecuteCommand("mc_Run FW");
+	
 	for (;;)
 	{
-		ExecuteCommand("mc_Run FW");
 		mcRecurrentFnc(0);
-		vTaskDelayUntil(&xLastWakeTime, (1000 / portTICK_RATE_MS));
+		vTaskDelayUntil(&xLastWakeTime, (200 / portTICK_RATE_MS));
 	}	
 }
 
-/**
-  * @}
-  */
-
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/**** END OF FILE ****/
