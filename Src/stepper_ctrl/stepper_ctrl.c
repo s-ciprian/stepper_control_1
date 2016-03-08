@@ -232,43 +232,12 @@ static int32_t process_mc_Stop(int argc, char *argv[])
 }
 
 //=========================================================================
-// Initialization function
-//
-// This function will register commands supported by this module
-//=========================================================================
-void mcInit(void)
-{
-	// Register commands
-	cmdAddNewCommand(&mc_GoTo);
-	cmdAddNewCommand(&mc_GetPos);
-	cmdAddNewCommand(&mc_Move);
-	cmdAddNewCommand(&mc_Stop);
-
-	// Initialize state machine state
-	mcState = Idle;
-
-	// Initialize axis data
-	firstAxis.id = 0;    /* Axis ID */
-	firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
-
-	/* Next command is necessary to fix the behavior described below:
-	   After reset is execute a hard stop even the command is to execute a soft stop.
-	   Fail first time after reset to execute a soft stop.
-	   Test is done using User Button (blue button). First press motor is running then second press motor is soft stop.
-	   Condition (relativePos >= devicePrm[deviceId].stepsToTake) is true first time after Reset because stepsToTake = 0 after initialization.
-	   After first Hard Stop stepsToTake = MAX_STEPS, so the above condition is false.
-	   Did not want to change ST Spin Library so this is an acceptable fix.
-	*/
-	BSP_MotorControl_HardStop(firstAxis.id);
-}
-
-//=========================================================================
 // Controller function
 //
 // This function will handle all events that are processed by this
 // controller
 //=========================================================================
-void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
+static void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
 {
 	switch (mcState) {
 		case Idle:
@@ -325,6 +294,7 @@ void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
 				}
 				mcState = Wait_Standstill;
 			}
+			firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
 			break;
 
 		case Wait_Standstill:
@@ -350,6 +320,77 @@ void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
 }
 
 //=========================================================================
+// Put together some commands that seems to repeat at the end of movement
+// states
+//
+//=========================================================================
+static inline void mcMovementEnding(void)
+{
+	// Get current position of device. Prepare for other components that needs this
+	firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id);
+
+	mcCmdData.cmd = NoCmd;
+	mcState = Idle;
+}
+
+//=========================================================================
+// Initialization function
+//
+// This function will register commands supported by this module
+//=========================================================================
+void mcInit(void)
+{
+	// Register commands
+	cmdAddNewCommand(&mc_GoTo);
+	cmdAddNewCommand(&mc_GetPos);
+	cmdAddNewCommand(&mc_Move);
+	cmdAddNewCommand(&mc_Stop);
+
+	// Initialize state machine state
+	mcState = Idle;
+
+	// Initialize axis data
+	firstAxis.id = 0;    /* Axis ID */
+	firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
+
+	/* Next command is necessary to fix the behavior described below:
+	   After reset is execute a hard stop even the command is to execute a soft stop.
+	   Fail first time after reset to execute a soft stop.
+	   Test is done using User Button (blue button). First press motor is running then second press motor is soft stop.
+	   Condition (relativePos >= devicePrm[deviceId].stepsToTake) is true first time after Reset because stepsToTake = 0 after initialization.
+	   After first Hard Stop stepsToTake = MAX_STEPS, so the above condition is false.
+	   Did not want to change ST Spin Library so this is an acceptable fix.
+	*/
+	BSP_MotorControl_HardStop(firstAxis.id);
+}
+
+//=========================================================================
+// Main function of this code block
+//
+//=========================================================================
+void mcRecurrentFnc(uint32_t current_time)
+{
+	//const uint32_t tsk_recr = 10;
+	//static uint32_t elapsed_time = 0;
+	//static uint32_t prevoius_time = 0;
+//
+//
+	//elapsed_time = timeDiff(current_time, prevoius_time);
+
+//	if (elapsed_time >= tsk_recr)
+//	{
+		// call here function "stepper_ctrl_ProcessEvent"
+	mcCmdData.cmd = Tick;
+	mcCmdData.dir = -1;
+	mcCmdData.pos = 0;
+	stepper_ctrl_ProcessEvent(&mcCmdData);
+
+			// store current time
+			//		prevoius_time = current_time;
+			//	}
+}
+
+//=========================================================================
 // Provide drive status
 //
 // mcDriveReady - a new command could be executed
@@ -372,42 +413,7 @@ mcDriveStatus_t mcGetDriverStatus(void)
 	}
 }
 
-//=========================================================================
-// Put together some commands that seems to repeat at the end of movement
-// states
-//
-//=========================================================================
-static inline void mcMovementEnding(void)
+int32_t mc_Get_MotorPosition(void)
 {
-	// Get current position of device. Prepare for other components that needs this
-	firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id);
-
-	mcCmdData.cmd = NoCmd;
-	mcState = Idle;
-}
-
-//=========================================================================
-// Main function of this code block
-//
-//=========================================================================
-void mcRecurrentFnc(uint32_t current_time)
-{
-	//const uint32_t tsk_recr = 10;
-	//static uint32_t elapsed_time = 0;
-	//static uint32_t prevoius_time = 0;
-//
-//
-	//elapsed_time = timeDiff(current_time, prevoius_time);
-
-//	if (elapsed_time >= tsk_recr)
-//	{
-		// call here function "stepper_ctrl_ProcessEvent"
-	    mcCmdData.cmd = Tick;
-	    mcCmdData.dir = -1;
-	    mcCmdData.pos = 0;
-		stepper_ctrl_ProcessEvent(&mcCmdData);
-
-		// store current time
-//		prevoius_time = current_time;
-//	}
+	return 0;
 }

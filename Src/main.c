@@ -55,8 +55,6 @@
  /* UART handler declaration */
  UART_HandleTypeDef UartHandle;
 
- // Test string
- uint8_t string[15] = "Hello World!\n\r";
  // Reusable command buffer
  static char cmdBuf[CMD_BUF_SIZE];
  // Store actual time in system ticks
@@ -72,6 +70,7 @@ static void MyFlagInterruptHandler(void);
 void Init_User_GPIO(void);
 static void LED_Thread1(void *argument);
 static void Motor_Controller(void *argument);
+static void Serial_Comm(void *argument);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -91,18 +90,15 @@ int main(void)
 	Init_User_GPIO();
 	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
 	////////////////////////////////////////
-	// Test Thread
+	// Thread creation
 	xTaskCreate(LED_Thread1, "LED1", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(Motor_Controller, "MC", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(Serial_Comm, "SC", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 
 	//printf("StartScheduler()\n");
 	/* Start scheduler */
 	vTaskStartScheduler();	
 	///////////////////////////////////////
-
-	uart2_Init();
-
-	uart2_Transmit(string, sizeof(string));
 
     // old code moved in function void originalTestCode(void)
 
@@ -537,7 +533,7 @@ static void LED_Thread1(void *argument)
 }
 
 /**
-  *
+  * Motor controll thread
   */
 static void Motor_Controller(void *argument)
 {
@@ -576,6 +572,28 @@ static void Motor_Controller(void *argument)
 		mcRecurrentFnc(0);
 		vTaskDelayUntil(&xLastWakeTime, (200 / portTICK_RATE_MS));
 	}	
+}
+
+/**
+  * Serial communication thread
+  */
+static void Serial_Comm(void *argument)
+{
+	portTickType xLastWakeTime;
+    // Test string
+	uint8_t string[15] = "Hello World!\n\r";	
+	
+	uart2_Init();
+	
+	xLastWakeTime = xTaskGetTickCount();
+	
+	for (;;)
+	{
+//		mc_Get_MotorPosition();
+		uart2_Transmit(string, sizeof(string));
+		
+		vTaskDelayUntil(&xLastWakeTime, (500 / portTICK_RATE_MS));
+	}
 }
 
 /**** END OF FILE ****/

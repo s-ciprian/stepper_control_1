@@ -17,6 +17,7 @@ typedef enum _mcDriveStatus_t
 void mcInit(void);
 void mcRecurrentFnc(uint32_t current_time);
 mcDriveStatus_t mcGetDriverStatus(void);
+int32_t mc_Get_MotorPosition(void);
 
 
 #ifdef __cplusplus
