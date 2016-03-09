@@ -36,6 +36,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+#include <string.h>
 #include <../CMSIS_RTOS/cmsis_os.h>
 #include "main.h"
 #include "uart2.h"
@@ -93,7 +94,7 @@ int main(void)
 	// Thread creation
 	xTaskCreate(LED_Thread1, "LED1", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(Motor_Controller, "MC", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
-	xTaskCreate(Serial_Comm, "SC", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(Serial_Comm, "SC", 256, NULL, 1, NULL);
 
 	//printf("StartScheduler()\n");
 	/* Start scheduler */
@@ -512,6 +513,16 @@ void Init_User_GPIO(void)
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
+
+/**
+  * 
+  */
+void vApplicationStackOverflowHook(xTaskHandle *pxTask, signed char *pcTaskName)
+{
+	while (1)
+		;
+}
+
 /**
   * @brief  Toggle LED1
   * @param  thread not used
@@ -554,8 +565,6 @@ static void Motor_Controller(void *argument)
     // Should be after BSP_MotorControl_Init() because reads data from motor driver
 	mcInit();
 	
-	xLastWakeTime = xTaskGetTickCount();
-	
 	  /* Reset device 0 to 1/x microstepping mode */
 	BSP_MotorControl_SelectStepMode(0, STEP_MODE_1_8);
 
@@ -566,6 +575,7 @@ static void Motor_Controller(void *argument)
 	BSP_MotorControl_SetDeceleration(0, 1600);
 	
 	ExecuteCommand("mc_Run FW");
+	xLastWakeTime = xTaskGetTickCount();
 	
 	for (;;)
 	{
@@ -579,9 +589,10 @@ static void Motor_Controller(void *argument)
   */
 static void Serial_Comm(void *argument)
 {
-	portTickType xLastWakeTime;
-    // Test string
-	uint8_t string[15] = "Hello World!\n\r";	
+	portTickType xLastWakeTime = 0;
+	int32_t act_pos = 0;
+	int32_t cx = 0;
+	char str[16] = {0};
 	
 	uart2_Init();
 	
@@ -589,8 +600,11 @@ static void Serial_Comm(void *argument)
 	
 	for (;;)
 	{
-//		mc_Get_MotorPosition();
-		uart2_Transmit(string, sizeof(string));
+        act_pos = mc_Get_MotorPosition();
+		
+		memset(str, 0, sizeof(str));
+		cx = snprintf(str, sizeof(str), "%i ", act_pos);
+		uart2_Transmit((uint8_t *)str, cx);
 		
 		vTaskDelayUntil(&xLastWakeTime, (500 / portTICK_RATE_MS));
 	}

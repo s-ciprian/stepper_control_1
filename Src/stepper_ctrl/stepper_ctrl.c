@@ -415,5 +415,5 @@ mcDriveStatus_t mcGetDriverStatus(void)
 
 int32_t mc_Get_MotorPosition(void)
 {
-	return 0;
+	return firstAxis.act_pos;
 }
