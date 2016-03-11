@@ -62,6 +62,9 @@
     <Filter Include="Header files\Device-specific files\HAL">
       <UniqueIdentifier>{5f7188d1-79c4-4e24-8dc7-c296689b4445}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\App\dio">
+      <UniqueIdentifier>{4cecd5e8-f0dc-49cd-b2b1-57f53bbc8f5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="system_stm32f4xx.c">
@@ -321,6 +324,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_usb.c">
       <Filter>Source files\Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\io\di.c">
+      <Filter>Source files\App\dio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -686,6 +692,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Inc\FreeRTOSConfig.h">
       <Filter>Source files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\io\di.h">
+      <Filter>Source files\App\dio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

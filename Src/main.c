@@ -43,6 +43,8 @@
 #include "stepper_ctrl.h"
 #include "cmd.h"
 
+#include "io/di.h"
+
 /** @defgroup IHM01A1_Example_for_1_motor_device
   * @{
   */ 
@@ -88,7 +90,8 @@ int main(void)
 	/* Configure the system clock */
 	SystemClock_Config();
 
-	Init_User_GPIO();
+	//Init_User_GPIO();
+	di_Init(pLED_1);
 	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
 	////////////////////////////////////////
 	// Thread creation
@@ -537,7 +540,8 @@ static void LED_Thread1(void *argument)
 	
 	for (;;)
 	{
-		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
+		//HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
+		di_Toggle_DigitalOutput(pLED_1);
 		
 		vTaskDelayUntil(&xLastWakeTime, (500 / portTICK_RATE_MS));
 	}
