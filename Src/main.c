@@ -42,7 +42,7 @@
 #include "uart2.h"
 #include "stepper_ctrl.h"
 #include "cmd.h"
-
+#include "io/do.h"
 #include "io/di.h"
 
 /** @defgroup IHM01A1_Example_for_1_motor_device
@@ -90,9 +90,9 @@ int main(void)
 	/* Configure the system clock */
 	SystemClock_Config();
 
-	//Init_User_GPIO();
-	di_Init(pLED_1);
-	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+	DigitalOutput_Init(pAlarm_LED);
+	DigitalInput_Init(pOnboard_Btn);
+	//BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
 	////////////////////////////////////////
 	// Thread creation
 	xTaskCreate(LED_Thread1, "LED1", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
@@ -500,6 +500,7 @@ void originalTestCode(void)
 	  HAL_Delay(2000);
 }
 
+// TODO: Delete this function
 /**
   *
   */
@@ -534,16 +535,23 @@ void vApplicationStackOverflowHook(xTaskHandle *pxTask, signed char *pcTaskName)
 static void LED_Thread1(void *argument)
 {
 	(void) argument;
-	portTickType xLastWakeTime;
+	portTickType xLastWakeTime, dly;
 	
 	xLastWakeTime = xTaskGetTickCount();
 	
 	for (;;)
 	{
-		//HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
-		di_Toggle_DigitalOutput(pLED_1);
+		if (DigitalInput_ReadPin(pOnboard_Btn) == GPIO_PIN_RESET)
+		{
+			dly = (500 / portTICK_RATE_MS);
+		}
+		else
+		{
+			dly = (1000 / portTICK_RATE_MS);
+		}
+		DigitalOutput_Toggle(pAlarm_LED);
 		
-		vTaskDelayUntil(&xLastWakeTime, (500 / portTICK_RATE_MS));
+		vTaskDelayUntil(&xLastWakeTime, dly);
 	}
 }
 

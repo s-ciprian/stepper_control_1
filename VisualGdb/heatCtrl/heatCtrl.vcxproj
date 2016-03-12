@@ -142,6 +142,7 @@
     <ClCompile Include="..\..\Src\cmd\cmd.c" />
     <ClCompile Include="..\..\Src\comm\uart2.c" />
     <ClCompile Include="..\..\Src\io\di.c" />
+    <ClCompile Include="..\..\Src\io\do.c" />
     <ClCompile Include="..\..\Src\main.c" />
     <ClCompile Include="..\..\Src\scheduler\sch_hlp.c" />
     <ClCompile Include="..\..\Src\stepper_ctrl\stepper_ctrl.c" />
@@ -269,6 +270,8 @@
     <ClInclude Include="..\..\Src\cmd\cmd.h" />
     <ClInclude Include="..\..\Src\comm\uart2.h" />
     <ClInclude Include="..\..\Src\io\di.h" />
+    <ClInclude Include="..\..\Src\io\dio_typedef.h" />
+    <ClInclude Include="..\..\Src\io\do.h" />
     <ClInclude Include="..\..\Src\scheduler\sch_hlp.h" />
     <ClInclude Include="..\..\Src\stepper_ctrl\stepper_ctrl.h" />
     <ClInclude Include="stm32f4xx_hal_conf.h" />

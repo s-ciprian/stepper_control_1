@@ -1,39 +1,33 @@
 #ifndef __DI_H__
 #define __DI_H__
 
-#include "stm32f4xx_hal.h"
-#include "stm32f4xx_nucleo.h"
+#include "dio_typedef.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-typedef uint16_t      pin_t;
-typedef GPIO_TypeDef* port_t;
-typedef uint32_t      pull_t;
-typedef uint32_t      pmode_t;
 
+/* Exported typedef ----------------------------------------------------------*/	
 typedef struct
 {
-	const pmode_t  pmode;
-	const port_t   port;
-	const pin_t    pin;
-	const pull_t   pull;
-} digital_io_t;
+	const digital_io_t dio;
+} digital_input_t;
 	
-typedef digital_io_t* p_digital_io_t;
-
-
-void di_Toggle_DigitalOutput(digital_io_t * dio);
-void di_Init(digital_io_t * dio);
+typedef digital_input_t* ptr_digital_input_t;	
 
 	
-extern p_digital_io_t pLED_1;
+/* Exported functions --------------------------------------------------------*/
+void DigitalInput_Init(ptr_digital_input_t di);
+GPIO_PinState DigitalInput_ReadPin(ptr_digital_input_t di);
+	
+
+/* Exported variables ---------------------------------------------------------*/
+extern ptr_digital_input_t pOnboard_Btn;
 	
 #ifdef __cplusplus
 }
 #endif
 
 #endif // __DI_H__
-		
