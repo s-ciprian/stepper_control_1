@@ -58,13 +58,6 @@
  /* UART handler declaration */
  UART_HandleTypeDef UartHandle;
 
- // Reusable command buffer
- static char cmdBuf[CMD_BUF_SIZE];
- // Store actual time in system ticks
- uint32_t currentTime;
-// Store actual position of the axis
- static int32_t actPos;
-
 
  static GPIO_PinState btnOldVal;
 
@@ -114,50 +107,10 @@ int main(void)
     /* Infinite loop */
     while(1)
     {
-		// Get actual time (in miliseconds)
-		currentTime = HAL_GetTick();
-
-		////////////////////////////////////////////////////////////////////
-		// Button (blue button on Nucleo401RE) - press detection and logics
-		////////////////////////////////////////////////////////////////////
-		static uint32_t btnCnt = 0;
-
-		if ( (BSP_PB_GetState(BUTTON_USER) == GPIO_PIN_RESET) &&
-			(btnOldVal == GPIO_PIN_SET) )
-		{
-			btnCnt++;
-		}
-		btnOldVal = BSP_PB_GetState(BUTTON_USER);
-		////////////////////////////////////////////////////////////////////
-
-		//////////////////////////////////////////////////////////////
-		// Test sequence - motor control
-		//////////////////////////////////////////////////////////////
-		if (mcDriverReady == mcGetDriverStatus())
-		{
-			// Return motor Actual Position in variable "actPos", command is "mc_GetPos &actPos"
-			snprintf(cmdBuf, CMD_BUF_SIZE, "mc_GetPos %p", &actPos);
-			ExecuteCommand(cmdBuf);
-
-			if(btnCnt == 1)
-			{
-				ExecuteCommand("mc_Run FW");
-				//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
-			}
-		}
-		else if (mcDriveJogging == mcGetDriverStatus())
-		{
-			if(btnCnt == 2)
-			{
-				ExecuteCommand("mc_Stop Soft");
-				//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
-			}
-		}
-
-		if (btnCnt >= 2) {btnCnt = 0;}
-		//////////////////////////////////////////////////////////////
-
-		//	   uart2_Transmit(string, sizeof(string));
+		// How to return motor Actual Position in variable "actPos" using command "mc_GetPos &actPos"
+	    // Position could be get directly using mc_Get_MotorPosition
+		//// snprintf(cmdBuf, 32, "mc_GetPos %p", &actPos);  // actPos is signed 32 bits
+		//// ExecuteCommand(cmdBuf);
 	}
 }
 
@@ -629,11 +582,15 @@ static void DI_Scan(void *argument)
 	pUsr_Btn_1->debounce.maximum = pUsr_Btn_1->debounce.time / scan_period;
 	pUsr_Btn_2->debounce.maximum = pUsr_Btn_2->debounce.time / scan_period;
 	
+	// Set initial filtered value same as pin value. Only after Reset
+	pUsr_Btn_1->debounce.fl_input = DigitalInput_ReadPin(pUsr_Btn_1);
+	pUsr_Btn_2->debounce.fl_input = DigitalInput_ReadPin(pUsr_Btn_2);
+	pOnboard_Btn->debounce.fl_input = DigitalInput_ReadPin(pOnboard_Btn);
+	
 	xLastWakeTime = xTaskGetTickCount();
 	
 	for (;;)
 	{
-
 		DigitalInput_DebouncePin(pUsr_Btn_1);
 		DigitalInput_DebouncePin(pUsr_Btn_2);
 		DigitalInput_DebouncePin(pOnboard_Btn);
