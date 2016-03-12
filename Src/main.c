@@ -92,6 +92,8 @@ int main(void)
 
 	DigitalOutput_Init(pAlarm_LED);
 	DigitalInput_Init(pOnboard_Btn);
+	DigitalInput_Init(pUsr_Btn_1);
+	DigitalInput_Init(pUsr_Btn_2);
 	//BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
 	////////////////////////////////////////
 	// Thread creation
@@ -541,7 +543,9 @@ static void LED_Thread1(void *argument)
 	
 	for (;;)
 	{
-		if (DigitalInput_ReadPin(pOnboard_Btn) == GPIO_PIN_RESET)
+		if( (DigitalInput_ReadPin(pOnboard_Btn) == GPIO_PIN_RESET) ||
+			(DigitalInput_ReadPin(pUsr_Btn_1) == GPIO_PIN_RESET) ||
+			(DigitalInput_ReadPin(pUsr_Btn_2) == GPIO_PIN_RESET) )
 		{
 			dly = (500 / portTICK_RATE_MS);
 		}

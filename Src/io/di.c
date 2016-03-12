@@ -17,9 +17,29 @@ digital_input_t Onboard_Btn =
 	.dio.pin = GPIO_PIN_13	
 };
 
+digital_input_t Usr_Btn_1 =
+{
+	.dio.pmode = GPIO_MODE_INPUT,
+	.dio.pull = GPIO_PULLDOWN,
+	.dio.port = GPIOA,
+	.dio.pin = GPIO_PIN_1	
+};
+
+digital_input_t Usr_Btn_2 =
+{
+	.dio.pmode = GPIO_MODE_INPUT,
+	.dio.pull = GPIO_PULLDOWN,
+	.dio.port = GPIOB,
+	.dio.pin = GPIO_PIN_0
+};
+
+
 /* Exported variables ---------------------------------------------------------*/
 ptr_digital_input_t pOnboard_Btn = &Onboard_Btn;
+ptr_digital_input_t pUsr_Btn_1 = &Usr_Btn_1;
+ptr_digital_input_t pUsr_Btn_2 = &Usr_Btn_2;
 
+	
 /* Exported functions --------------------------------------------------------*/
 /**
   *

@@ -25,6 +25,8 @@ GPIO_PinState DigitalInput_ReadPin(ptr_digital_input_t di);
 
 /* Exported variables ---------------------------------------------------------*/
 extern ptr_digital_input_t pOnboard_Btn;
+extern ptr_digital_input_t pUsr_Btn_1;
+extern ptr_digital_input_t pUsr_Btn_2;
 	
 #ifdef __cplusplus
 }
