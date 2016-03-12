@@ -74,6 +74,7 @@ void Init_User_GPIO(void);
 static void LED_Thread1(void *argument);
 static void Motor_Controller(void *argument);
 static void Serial_Comm(void *argument);
+static void DI_Scan(void *argument);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -91,15 +92,13 @@ int main(void)
 	SystemClock_Config();
 
 	DigitalOutput_Init(pAlarm_LED);
-	DigitalInput_Init(pOnboard_Btn);
-	DigitalInput_Init(pUsr_Btn_1);
-	DigitalInput_Init(pUsr_Btn_2);
-	//BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+
 	////////////////////////////////////////
 	// Thread creation
 	xTaskCreate(LED_Thread1, "LED1", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(Motor_Controller, "MC", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(Serial_Comm, "SC", 256, NULL, 1, NULL);
+	xTaskCreate(DI_Scan, "DIS", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 
 	//printf("StartScheduler()\n");
 	/* Start scheduler */
@@ -107,15 +106,6 @@ int main(void)
 	///////////////////////////////////////
 
     // old code moved in function void originalTestCode(void)
-
-    // Cip - Testing
-    /* Select full step mode for device 0 */
-//   BSP_MotorControl_SelectStepMode(0, STEP_MODE_FULL);
-    /* Update speed, acceleration, deceleration for */
-//   BSP_MotorControl_SetMaxSpeed(0, 3200);
-//   BSP_MotorControl_SetMinSpeed(0, 400);
-//   BSP_MotorControl_SetAcceleration(0, 1600);
-//   BSP_MotorControl_SetDeceleration(0, 1600);
 
 //   volatile uint32_t param = BSP_MotorControl_CmdGetParam(0, L6474_TVAL);
 
@@ -502,24 +492,6 @@ void originalTestCode(void)
 	  HAL_Delay(2000);
 }
 
-// TODO: Delete this function
-/**
-  *
-  */
-void Init_User_GPIO(void)
-{
-	GPIO_InitTypeDef GPIO_InitStructure;
-	
-	// Led Output connected on CN8-A0 (PA0)
-	__GPIOA_CLK_ENABLE();
-	GPIO_InitStructure.Pin = GPIO_PIN_0;
-	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
-	GPIO_InitStructure.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
-}
-
-
 /**
   * 
   */
@@ -543,9 +515,9 @@ static void LED_Thread1(void *argument)
 	
 	for (;;)
 	{
-		if( (DigitalInput_ReadPin(pOnboard_Btn) == GPIO_PIN_RESET) ||
-			(DigitalInput_ReadPin(pUsr_Btn_1) == GPIO_PIN_RESET) ||
-			(DigitalInput_ReadPin(pUsr_Btn_2) == GPIO_PIN_RESET) )
+		if( (pOnboard_Btn->debounce.fl_input == 0) ||
+			(pUsr_Btn_1->debounce.fl_input == 0) ||
+			(pUsr_Btn_2->debounce.fl_input == 0) )
 		{
 			dly = (500 / portTICK_RATE_MS);
 		}
@@ -595,6 +567,19 @@ static void Motor_Controller(void *argument)
 	
 	for (;;)
 	{
+		if (pUsr_Btn_1->debounce.fl_input == 0)
+		{
+			ExecuteCommand("mc_Run FW");
+		}
+		else if (pUsr_Btn_2->debounce.fl_input == 0)
+		{
+			ExecuteCommand("mc_Run BW");
+		}
+		else
+		{
+			ExecuteCommand("mc_Stop Soft");
+		}
+		
 		mcRecurrentFnc(0);
 		vTaskDelayUntil(&xLastWakeTime, (200 / portTICK_RATE_MS));
 	}	
@@ -623,6 +608,36 @@ static void Serial_Comm(void *argument)
 		uart2_Transmit((uint8_t *)str, cx);
 		
 		vTaskDelayUntil(&xLastWakeTime, (500 / portTICK_RATE_MS));
+	}
+}
+
+/**
+  * Digital inputs scanner
+  */
+static void DI_Scan(void *argument)
+{
+	portTickType xLastWakeTime = 0;
+	portTickType scan_period = 10;  // Scan period in ms
+	
+	// Initialize inputs
+	DigitalInput_Init(pOnboard_Btn);
+	DigitalInput_Init(pUsr_Btn_1);
+	DigitalInput_Init(pUsr_Btn_2);
+	
+	// Compute maximum value. This value will be compared with the integrator in filter code
+	pOnboard_Btn->debounce.maximum = pOnboard_Btn->debounce.time / scan_period;
+	pUsr_Btn_1->debounce.maximum = pUsr_Btn_1->debounce.time / scan_period;
+	pUsr_Btn_2->debounce.maximum = pUsr_Btn_2->debounce.time / scan_period;
+	
+	xLastWakeTime = xTaskGetTickCount();
+	
+	for (;;)
+	{
+
+		DigitalInput_DebouncePin(pUsr_Btn_1);
+		DigitalInput_DebouncePin(pUsr_Btn_2);
+		DigitalInput_DebouncePin(pOnboard_Btn);
+		vTaskDelayUntil(&xLastWakeTime, (scan_period / portTICK_RATE_MS));
 	}
 }
 
