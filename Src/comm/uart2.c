@@ -83,7 +83,7 @@ void uart2_Init(void)
 	  - Hardware flow control disabled (RTS and CTS signals) */
 	hUart_2.Instance          = USART2;
 
-	hUart_2.Init.BaudRate     = 9600;
+	hUart_2.Init.BaudRate     = 115200;
 	hUart_2.Init.WordLength   = UART_WORDLENGTH_8B;
 	hUart_2.Init.StopBits     = UART_STOPBITS_1;
 	hUart_2.Init.Parity       = UART_PARITY_NONE;

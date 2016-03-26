@@ -546,7 +546,8 @@ static void Serial_Comm(void *argument)
 	portTickType xLastWakeTime = 0;
 	int32_t act_pos = 0;
 	int32_t cx = 0;
-	char str[16] = {0};
+	uint16_t statusRegister;
+	char str[20] = {0};
 	
 	uart2_Init();
 	
@@ -555,9 +556,13 @@ static void Serial_Comm(void *argument)
 	for (;;)
 	{
         act_pos = mc_Get_MotorPosition();
+		/* Get the value of the status register of the L6474 */
+		statusRegister = BSP_MotorControl_CmdGetStatus(0);
 		
+		// Clear string
 		memset(str, 0, sizeof(str));
-		cx = snprintf(str, sizeof(str), "%i ", act_pos);
+		// Format and send string containing status register of motor driver and actual motor position
+		cx = snprintf(str, sizeof(str), "%i, %u\r\n", act_pos, statusRegister);
 		uart2_Transmit((uint8_t *)str, cx);
 		
 		vTaskDelayUntil(&xLastWakeTime, (500 / portTICK_RATE_MS));
