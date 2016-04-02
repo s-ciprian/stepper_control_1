@@ -29,7 +29,7 @@ digital_input_t Usr_Btn_1 =
 	.dio.port = GPIOA,
 	.dio.pin = GPIO_PIN_1,
 	// debounce cfg
-	.debounce.time = 100,
+	.debounce.time = 50,
 	.debounce.maximum = 10, //updated later
 	.debounce.fl_input = 0,
 	.debounce.integrator = 0		
@@ -42,7 +42,7 @@ digital_input_t Usr_Btn_2 =
 	.dio.port = GPIOB,
 	.dio.pin = GPIO_PIN_0,
 	// debounce cfg
-	.debounce.time = 100,
+	.debounce.time = 50,
 	.debounce.maximum = 10, //updated later
 	.debounce.fl_input = 0,
 	.debounce.integrator = 0		

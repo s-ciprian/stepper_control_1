@@ -510,10 +510,10 @@ static void Motor_Controller(void *argument)
 	BSP_MotorControl_SelectStepMode(0, STEP_MODE_1_8);
 
 	/* Update speed, acceleration, deceleration for 1/x microstepping mode*/
-	BSP_MotorControl_SetMaxSpeed(0, 3600);
-	BSP_MotorControl_SetMinSpeed(0, 100);
-	BSP_MotorControl_SetAcceleration(0, 1600);
-	BSP_MotorControl_SetDeceleration(0, 1600);
+	BSP_MotorControl_SetMaxSpeed(0, 1000);
+	BSP_MotorControl_SetMinSpeed(0, 0);
+	BSP_MotorControl_SetAcceleration(0, 1200);
+	BSP_MotorControl_SetDeceleration(0, 2000);
 	
 	ExecuteCommand("mc_Run FW");
 	xLastWakeTime = xTaskGetTickCount();
@@ -534,7 +534,7 @@ static void Motor_Controller(void *argument)
 		}
 		
 		mcRecurrentFnc(0);
-		vTaskDelayUntil(&xLastWakeTime, (200 / portTICK_RATE_MS));
+		vTaskDelayUntil(&xLastWakeTime, (20 / portTICK_RATE_MS));
 	}	
 }
 

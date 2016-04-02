@@ -302,6 +302,7 @@ static void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
 			{
 				mcMovementEnding();
 			}
+			firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
 			break;
 
 		case Parametrization:
