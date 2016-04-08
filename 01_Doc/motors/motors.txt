@@ -1,0 +1,7 @@
+Wantai motors
+ 42BYGHW609
+ 1.7A, 1.8deg
+
+- the bigger one
+SY57STH76-2004A
+1,85Nm

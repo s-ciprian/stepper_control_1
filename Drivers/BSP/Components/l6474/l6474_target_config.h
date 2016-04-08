@@ -66,28 +66,28 @@
 /************************ Speed Profile  *******************************/
 
 /// Acceleration rate in step/s2 for device 0 (must be greater than 0)
-#define L6474_CONF_PARAM_ACC_DEVICE_0        (160)
+#define L6474_CONF_PARAM_ACC_DEVICE_0        (2000)
 /// Acceleration rate in step/s2 for device 1 (must be greater than 0)
 #define L6474_CONF_PARAM_ACC_DEVICE_1        (160)
 /// Acceleration rate in step/s2 for device 2 (must be greater than 0)
 #define L6474_CONF_PARAM_ACC_DEVICE_2        (160)
 
 /// Deceleration rate in step/s2 for device 0 (must be greater than 0)
-#define L6474_CONF_PARAM_DEC_DEVICE_0        (160)
+#define L6474_CONF_PARAM_DEC_DEVICE_0        (2000)
 /// Deceleration rate in step/s2 for device 1 (must be greater than 0)
 #define L6474_CONF_PARAM_DEC_DEVICE_1        (160)
 /// Deceleration rate in step/s2 for device 2 (must be greater than 0)
 #define L6474_CONF_PARAM_DEC_DEVICE_2        (160)
 
 /// Maximum speed in step/s for device 0 (30 step/s < Maximum speed <= 10 000 step/s )
-#define L6474_CONF_PARAM_MAX_SPEED_DEVICE_0  (1600)
+#define L6474_CONF_PARAM_MAX_SPEED_DEVICE_0  (1000)
 /// Maximum speed in step/s for device 1 (30 step/s < Maximum speed <= 10 000 step/s )
 #define L6474_CONF_PARAM_MAX_SPEED_DEVICE_1  (1600)
 /// Maximum speed in step/s for device 2 (30 step/s < Maximum speed <= 10 000 step/s )
 #define L6474_CONF_PARAM_MAX_SPEED_DEVICE_2  (1600)
 
 /// Minimum speed in step/s for device 0 (30 step/s <= Minimum speed < 10 000 step/s)
-#define L6474_CONF_PARAM_MIN_SPEED_DEVICE_0  (800)
+#define L6474_CONF_PARAM_MIN_SPEED_DEVICE_0  (36)
 /// Minimum speed in step/s for device 1 (30 step/s <= Minimum speed < 10 000 step/s)
 #define L6474_CONF_PARAM_MIN_SPEED_DEVICE_1  (800)
 /// Minimum speed in step/s for device 2 (30 step/s <= Minimum speed < 10 000 step/s)
@@ -98,7 +98,7 @@
 
 // Current value that is assigned to the torque regulation DAC
 /// TVAL register value for device 0 (range 31.25mA to 4000mA)
-#define L6474_CONF_PARAM_TVAL_DEVICE_0  (1000)
+#define L6474_CONF_PARAM_TVAL_DEVICE_0  (1600)
 /// TVAL register value for device 1 (range 31.25mA to 4000mA)
 #define L6474_CONF_PARAM_TVAL_DEVICE_1  (250)
 /// TVAL register value for device 2 (range 31.25mA to 4000mA)
