@@ -255,7 +255,8 @@ static int32_t process_mc_Stop(int argc, char *argv[])
     // ERR: Command rejected because another motor mc command execution is in progress
     if ( (mcState != Movement_Jog) &&
     	 (mcState != Movement_Positioning_Absolute)	&&
-    	 (mcState != Movement_Positioning_Relative) )
+    	 (mcState != Movement_Positioning_Relative) &&
+		 (mcState != Wait_Standstill) )
     {
     	// TODO: Add application level error handling
 
@@ -337,6 +338,19 @@ static void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
 			break;
 
 		case Wait_Standstill:
+		    if (c->cmd == Stop)   // Stop during DECELERATION, case when hiting limit switch while DECELERATING. Then need a HARD STOP  
+		    {
+			    if (c->s_type == Hard)
+			    {
+				    BSP_MotorControl_HardStop(firstAxis.id);
+			    }
+			    else
+			    {
+				    BSP_MotorControl_SoftStop(firstAxis.id);
+			    }
+		    }
+		
+			// Wait here until motor decelerating
 			if (INACTIVE == BSP_MotorControl_GetDeviceState(firstAxis.id))
 			{
 				mcMovementEnding();

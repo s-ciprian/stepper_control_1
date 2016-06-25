@@ -453,10 +453,6 @@ static void Motor_Controller(void *argument)
 		if ((pLimit_SW_Plus->debounce.fl_input == 0) && Limit_P_old)
 		{
 			ExecuteCommand("mc_Stop Hard");
-			BSP_MotorControl_HardStop(0);
-			// FIX THIS: During deceleration HARD STOP command is not executed.
-			// If axis decelerate and touch the Limit switch doesn't stop
-			// with Hard Stop. Not good to call here BSP_Motor...
 		} // else - axis is on switch, is above situation
 		
 		// ================== Jog Negative with Limits ==================
@@ -477,7 +473,6 @@ static void Motor_Controller(void *argument)
 		if ((pLimit_SW_Minus->debounce.fl_input == 0) && Limit_N_old)
 		{
 			ExecuteCommand("mc_Stop Hard");
-			BSP_MotorControl_HardStop(0);
 		}  // else - axis is on switch, is above situation
 		
 		// Front detection - update last values (User buttons - here JogP and JogN) and Limits switches
