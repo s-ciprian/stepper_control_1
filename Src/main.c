@@ -62,7 +62,6 @@
  static GPIO_PinState btnOldVal;
 
 /* Private function prototypes -----------------------------------------------*/
-static void MyFlagInterruptHandler(void);
 void Init_User_GPIO(void);
 static void LED_Thread1(void *argument);
 static void Motor_Controller(void *argument);
@@ -112,80 +111,6 @@ int main(void)
 		//// snprintf(cmdBuf, 32, "mc_GetPos %p", &actPos);  // actPos is signed 32 bits
 		//// ExecuteCommand(cmdBuf);
 	}
-}
-
-/**
-  * @brief  This function is the User handler for the flag interrupt
-  * @param  None
-  * @retval None
-  */
-void MyFlagInterruptHandler(void)
-{
-	/* Get the value of the status register via the L6474 command GET_STATUS */
-	uint16_t statusRegister = BSP_MotorControl_CmdGetStatus(0);
-  
-	/* Check HIZ flag: if set, power brigdes are disabled */
-	if ((statusRegister & L6474_STATUS_HIZ) == L6474_STATUS_HIZ)
-	{
-	// HIZ state
-	// Action to be customized            
-	}
-
-	/* Check direction bit */
-	if ((statusRegister & L6474_STATUS_DIR) == L6474_STATUS_DIR)
-	{
-	// Forward direction is set
-	// Action to be customized            
-	}  
-	else
-	{
-	// Backward direction is set
-	// Action to be customized            
-	}  
-
-	/* Check NOTPERF_CMD flag: if set, the command received by SPI can't be performed */
-	/* This often occures when a command is sent to the L6474 */
-	/* while it is in HIZ state */
-	if ((statusRegister & L6474_STATUS_NOTPERF_CMD) == L6474_STATUS_NOTPERF_CMD)
-	{
-		// Command received by SPI can't be performed
-		// Action to be customized            
-	}  
-
-	/* Check WRONG_CMD flag: if set, the command does not exist */
-	if ((statusRegister & L6474_STATUS_WRONG_CMD) == L6474_STATUS_WRONG_CMD)
-	{
-		//command received by SPI does not exist 
-		// Action to be customized          
-	}  
-
-	/* Check UVLO flag: if not set, there is an undervoltage lock-out */
-	if ((statusRegister & L6474_STATUS_UVLO) == 0)
-	{
-		//undervoltage lock-out 
-		// Action to be customized          
-	}  
-
-	/* Check TH_WRN flag: if not set, the thermal warning threshold is reached */
-	if ((statusRegister & L6474_STATUS_TH_WRN) == 0)
-	{
-	//thermal warning threshold is reached
-	// Action to be customized          
-	}    
-
-	/* Check TH_SHD flag: if not set, the thermal shut down threshold is reached */
-	if ((statusRegister & L6474_STATUS_TH_SD) == 0)
-	{
-	//thermal shut down threshold is reached 
-	// Action to be customized          
-	}    
-
-	/* Check OCD  flag: if not set, there is an overcurrent detection */
-	if ((statusRegister & L6474_STATUS_OCD) == 0)
-	{
-	//overcurrent detection 
-	// Action to be customized          
-	}      
 }
 
 /**
@@ -489,49 +414,77 @@ static void LED_Thread1(void *argument)
   */
 static void Motor_Controller(void *argument)
 {
+	// Task Variables 
+	//==================================================
 	portTickType xLastWakeTime;
-	
-    //----- Init of the Motor control library 
-    /* Start the L6474 library to use 1 device */
-    /* The L6474 registers are set with the predefined values */
-    /* from file l6474_target_config.h*/
-	BSP_MotorControl_Init(BSP_MOTOR_CONTROL_BOARD_ID_L6474, 1);
-  
-	/* Attach the function MyFlagInterruptHandler (defined below) to the flag interrupt */
-	BSP_MotorControl_AttachFlagInterrupt(MyFlagInterruptHandler);
+	// Front detection - last values
+	uint16_t Btn1_old, Btn2_old, Limit_P_old, Limit_N_old;	
 
-	  /* Attach the function Error_Handler (defined below) to the error Handler*/
-	BSP_MotorControl_AttachErrorHandler(Error_Handler);	
-	
-    // Should be after BSP_MotorControl_Init() because reads data from motor driver
+	// Task code
+	//==================================================	
 	mcInit();
 	
-	  /* Reset device 0 to 1/x microstepping mode */
-	BSP_MotorControl_SelectStepMode(0, STEP_MODE_1_8);
-
-	/* Update speed, acceleration, deceleration for 1/x microstepping mode*/
-	BSP_MotorControl_SetMaxSpeed(0, 1000);
-	BSP_MotorControl_SetMinSpeed(0, 0);
-	BSP_MotorControl_SetAcceleration(0, 1200);
-	BSP_MotorControl_SetDeceleration(0, 2000);
+	// Front detection - init
+	Btn1_old = pUsr_Btn_1->debounce.fl_input;
+	Btn2_old = pUsr_Btn_2->debounce.fl_input;
+	Limit_P_old = pLimit_SW_Plus->debounce.fl_input;
+	Limit_N_old = pLimit_SW_Minus->debounce.fl_input;
 	
-	ExecuteCommand("mc_Run FW");
 	xLastWakeTime = xTaskGetTickCount();
+
 	
 	for (;;)
 	{
-		if (pUsr_Btn_1->debounce.fl_input == 0)
+		// ================== Jog Positive with Limits ==================
+		// If not on limit switch (Positive), Jog events (JogP) should work
+		if (pLimit_SW_Plus->debounce.fl_input)
 		{
-			ExecuteCommand("mc_Run FW");
-		}
-		else if (pUsr_Btn_2->debounce.fl_input == 0)
+		    // send Events (down/up) for HMI Button 1
+			if ((pUsr_Btn_1->debounce.fl_input == 0) && (Btn1_old))
+			{
+				ExecuteCommand("HMI_JogP Down");
+			}
+			else if ((Btn1_old == 0) && pUsr_Btn_1->debounce.fl_input)
+			{
+				ExecuteCommand("HMI_JogP Up");			
+			}
+		}// else = if axis seat on limit switch ignore events
+		// If axis just touch the Limit SW (Positive direction) - Hard Stop
+		if ((pLimit_SW_Plus->debounce.fl_input == 0) && Limit_P_old)
 		{
-			ExecuteCommand("mc_Run BW");
-		}
-		else
+			ExecuteCommand("mc_Stop Hard");
+			BSP_MotorControl_HardStop(0);
+			// FIX THIS: During deceleration HARD STOP command is not executed.
+			// If axis decelerate and touch the Limit switch doesn't stop
+			// with Hard Stop. Not good to call here BSP_Motor...
+		} // else - axis is on switch, is above situation
+		
+		// ================== Jog Negative with Limits ==================
+		//  If not on limit switch (Negative), Jog events (JogP) should work
+		if (pLimit_SW_Minus->debounce.fl_input)
 		{
-			ExecuteCommand("mc_Stop Soft");
-		}
+			
+			if ((pUsr_Btn_2->debounce.fl_input == 0) && (Btn2_old))
+			{
+				ExecuteCommand("HMI_JogN Down");
+			}
+			else if ((Btn2_old == 0) && pUsr_Btn_2->debounce.fl_input)
+			{
+				ExecuteCommand("HMI_JogN Up");
+			}
+		}// else = if axis seat on limit switch ignore events
+		// If axis just touch the Limit SW (Positive direction) - Hard Stop
+		if ((pLimit_SW_Minus->debounce.fl_input == 0) && Limit_N_old)
+		{
+			ExecuteCommand("mc_Stop Hard");
+			BSP_MotorControl_HardStop(0);
+		}  // else - axis is on switch, is above situation
+		
+		// Front detection - update last values (User buttons - here JogP and JogN) and Limits switches
+		Btn1_old = pUsr_Btn_1->debounce.fl_input;
+		Btn2_old = pUsr_Btn_2->debounce.fl_input;
+		Limit_P_old = pLimit_SW_Plus->debounce.fl_input;
+		Limit_N_old = pLimit_SW_Minus->debounce.fl_input;
 		
 		mcRecurrentFnc(0);
 		vTaskDelayUntil(&xLastWakeTime, (20 / portTICK_RATE_MS));
@@ -581,16 +534,22 @@ static void DI_Scan(void *argument)
 	DigitalInput_Init(pOnboard_Btn);
 	DigitalInput_Init(pUsr_Btn_1);
 	DigitalInput_Init(pUsr_Btn_2);
+	DigitalInput_Init(pLimit_SW_Minus);
+	DigitalInput_Init(pLimit_SW_Plus);
 	
 	// Compute maximum value. This value will be compared with the integrator in filter code
-	pOnboard_Btn->debounce.maximum = pOnboard_Btn->debounce.time / scan_period;
-	pUsr_Btn_1->debounce.maximum = pUsr_Btn_1->debounce.time / scan_period;
-	pUsr_Btn_2->debounce.maximum = pUsr_Btn_2->debounce.time / scan_period;
+	pOnboard_Btn->debounce.maximum = (pOnboard_Btn->debounce.time / scan_period);
+	pUsr_Btn_1->debounce.maximum = (pUsr_Btn_1->debounce.time / scan_period);
+	pUsr_Btn_2->debounce.maximum = (pUsr_Btn_2->debounce.time / scan_period);
+	pLimit_SW_Minus->debounce.maximum = (pLimit_SW_Minus->debounce.time / scan_period);
+	pLimit_SW_Plus->debounce.maximum = (pLimit_SW_Plus->debounce.time / scan_period);
 	
 	// Set initial filtered value same as pin value. Only after Reset
 	pUsr_Btn_1->debounce.fl_input = DigitalInput_ReadPin(pUsr_Btn_1);
 	pUsr_Btn_2->debounce.fl_input = DigitalInput_ReadPin(pUsr_Btn_2);
 	pOnboard_Btn->debounce.fl_input = DigitalInput_ReadPin(pOnboard_Btn);
+	pLimit_SW_Minus->debounce.fl_input = DigitalInput_ReadPin(pLimit_SW_Minus);
+	pLimit_SW_Plus->debounce.fl_input = DigitalInput_ReadPin(pLimit_SW_Plus);
 	
 	xLastWakeTime = xTaskGetTickCount();
 	
@@ -599,6 +558,8 @@ static void DI_Scan(void *argument)
 		DigitalInput_DebouncePin(pUsr_Btn_1);
 		DigitalInput_DebouncePin(pUsr_Btn_2);
 		DigitalInput_DebouncePin(pOnboard_Btn);
+		DigitalInput_DebouncePin(pLimit_SW_Minus);
+		DigitalInput_DebouncePin(pLimit_SW_Plus);
 		vTaskDelayUntil(&xLastWakeTime, (scan_period / portTICK_RATE_MS));
 	}
 }
