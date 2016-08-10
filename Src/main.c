@@ -1,4 +1,6 @@
-/* check if my teammate  see this */
+/* check if my teammate  see this
+   hello test issue 2
+ */
 /**
   ******************************************************************************
   * @file    Multi/Examples/MotionControl/IHM01A1_ExampleFor1Motor/Src/main.c 
