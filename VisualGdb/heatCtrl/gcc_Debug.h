@@ -552,6 +552,9 @@
 #ifndef __GCC_ATOMIC_INT_LOCK_FREE
 #define __GCC_ATOMIC_INT_LOCK_FREE 2
 #endif
+#ifndef USE_FREERTOS
+#define USE_FREERTOS 1
+#endif
 #ifndef __FLOAT_WORD_ORDER__
 #define __FLOAT_WORD_ORDER__ __ORDER_LITTLE_ENDIAN__
 #endif
@@ -1087,11 +1090,13 @@
 
 // --- Include directories begin --- //
 //.
+//$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32/FreeRTOS/Source/CMSIS_RTOS
 //$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32/FreeRTOS/Source/include
 //$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32/FreeRTOS/Source/Portable/gcc/ARM_CM4F
 //$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32/STM32F4xxxx/STM32F4xx_HAL_Driver/Inc
 //$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32/STM32F4xxxx/STM32F4xx_HAL_Driver/Inc/Legacy
 //$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include
+//$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/t
 //$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Include
 //$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/RTOS/Template
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/5.3.0/../../../../arm-eabi/include/c++/5.3.0

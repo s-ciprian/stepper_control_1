@@ -136,6 +136,12 @@
     <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\FreeRTOS\Source\portable\MemMang\heap_4.c">
       <Filter>Source files\Device-specific files\FreeRTOS</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Src\io\di.c">
+      <Filter>Source files\App\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\io\do.c">
+      <Filter>Source files\App\IO</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c">
       <Filter>Source files\Device-specific files\HAL</Filter>
     </ClCompile>
@@ -175,6 +181,9 @@
     <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dcmi_ex.c">
       <Filter>Source files\Device-specific files\HAL</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dfsdm.c">
+      <Filter>Source files\Device-specific files\HAL</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.c">
       <Filter>Source files\Device-specific files\HAL</Filter>
     </ClCompile>
@@ -182,6 +191,9 @@
       <Filter>Source files\Device-specific files\HAL</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c">
+      <Filter>Source files\Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dsi.c">
       <Filter>Source files\Device-specific files\HAL</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_eth.c">
@@ -232,7 +244,13 @@
     <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_iwdg.c">
       <Filter>Source files\Device-specific files\HAL</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_lptim.c">
+      <Filter>Source files\Device-specific files\HAL</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_ltdc.c">
+      <Filter>Source files\Device-specific files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_ltdc_ex.c">
       <Filter>Source files\Device-specific files\HAL</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_nand.c">
@@ -324,12 +342,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_usb.c">
       <Filter>Source files\Device-specific files\HAL</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Src\io\di.c">
-      <Filter>Source files\App\IO</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Src\io\do.c">
-      <Filter>Source files\App\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -447,6 +459,18 @@
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\FreeRTOS\Source\portable\GCC\ARM_CM4F\portmacro.h">
       <Filter>Header files\Device-specific files\FreeRTOS</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Inc\FreeRTOSConfig.h">
+      <Filter>Source files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\io\dio_typedef.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\io\di.h">
+      <Filter>Source files\App\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\io\do.h">
+      <Filter>Source files\App\IO</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h">
       <Filter>Header files\Device-specific files\HAL</Filter>
     </ClInclude>
@@ -489,6 +513,9 @@
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h">
       <Filter>Header files\Device-specific files\HAL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dfsdm.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dma.h">
       <Filter>Header files\Device-specific files\HAL</Filter>
     </ClInclude>
@@ -496,6 +523,9 @@
       <Filter>Header files\Device-specific files\HAL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dma_ex.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dsi.h">
       <Filter>Header files\Device-specific files\HAL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_eth.h">
@@ -549,7 +579,13 @@
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_iwdg.h">
       <Filter>Header files\Device-specific files\HAL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_lptim.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_ltdc.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_ltdc_ex.h">
       <Filter>Header files\Device-specific files\HAL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_nand.h">
@@ -651,6 +687,42 @@
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\system_stm32f4xx.h">
       <Filter>Header files\Device-specific files\HAL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t\stm32f302x8.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t\stm32f302xc.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t\stm32f302xe.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t\stm32f303x8.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t\stm32f303xc.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t\stm32f318xx.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t\stm32f328xx.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t\stm32f334x8.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t\stm32f358xx.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t\stm32f373xc.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t\stm32f378xx.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t\stm32f398xx.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Include\arm_common_tables.h">
       <Filter>Header files\Device-specific files\HAL</Filter>
     </ClInclude>
@@ -658,6 +730,15 @@
       <Filter>Header files\Device-specific files\HAL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Include\arm_math.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Include\cmsis_armcc.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Include\cmsis_armcc_V6.h">
+      <Filter>Header files\Device-specific files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Include\cmsis_gcc.h">
       <Filter>Header files\Device-specific files\HAL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Include\core_cm0.h">
@@ -692,18 +773,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Users\cip\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\RTOS\Template\cmsis_os.h">
       <Filter>Header files\Device-specific files\HAL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Inc\FreeRTOSConfig.h">
-      <Filter>Source files\App</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Src\io\dio_typedef.h">
-      <Filter>Header files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Src\io\di.h">
-      <Filter>Source files\App\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Src\io\do.h">
-      <Filter>Source files\App\IO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

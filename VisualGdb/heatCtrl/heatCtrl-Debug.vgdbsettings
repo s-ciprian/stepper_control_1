@@ -55,6 +55,7 @@
         <ThreadInfoSupported>false</ThreadInfoSupported>
         <PendingBreakpointsSupported>false</PendingBreakpointsSupported>
         <SupportTargetCommand>false</SupportTargetCommand>
+        <ReliableBreakpointNotifications>false</ReliableBreakpointNotifications>
       </Features>
       <DisableDisassembly>false</DisableDisassembly>
       <ExamineMemoryWithXCommand>false</ExamineMemoryWithXCommand>
@@ -137,6 +138,8 @@
     <SemihostingSupport>Auto</SemihostingSupport>
     <StepIntoEntryPoint>false</StepIntoEntryPoint>
     <ReloadFirmwareOnReset>false</ReloadFirmwareOnReset>
+    <ValidateEndOfStackAddress>true</ValidateEndOfStackAddress>
+    <StopAtEntryPoint>false</StopAtEntryPoint>
   </Debug>
   <CustomBuild>
     <PreBuildActions />
