@@ -24,6 +24,8 @@ void DigitalOutput_SetLow(ptr_digital_output_t dq);
 
 /* Exported variables ---------------------------------------------------------*/
 extern ptr_digital_output_t pAlarm_LED;
+extern ptr_digital_output_t pUsr_Out_1;
+
 	
 
 #ifdef __cplusplus

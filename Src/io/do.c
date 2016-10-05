@@ -16,8 +16,18 @@ digital_output_t Alarm_LED =
 	.dio.pin   = GPIO_PIN_0	
 };
 
+digital_output_t Usr_Out_1 =
+{
+	.dio.pmode = GPIO_MODE_OUTPUT_PP,
+	.dio.pull = GPIO_NOPULL,
+	.dio.port = GPIOC,
+	.dio.pin = GPIO_PIN_3
+};
+
+
 /* Exported variables ---------------------------------------------------------*/
 ptr_digital_output_t pAlarm_LED = &Alarm_LED;
+ptr_digital_output_t pUsr_Out_1 = &Usr_Out_1;
 
 /* Exported functions --------------------------------------------------------*/
 /**

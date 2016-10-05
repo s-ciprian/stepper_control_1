@@ -48,6 +48,20 @@ digital_input_t Usr_Btn_2 =
 	.debounce.integrator = 0		
 };
 
+digital_input_t Usr_Btn_3 =
+{
+	.dio.pmode = GPIO_MODE_INPUT,
+	.dio.pull = GPIO_PULLDOWN,
+	.dio.port = GPIOC,
+	.dio.pin = GPIO_PIN_2,
+	// debounce cfg
+	.debounce.time = 50,
+	.debounce.maximum = 10, //updated later
+	.debounce.fl_input = 0,
+	.debounce.integrator = 0		
+};
+
+
 digital_input_t Limit_SW_Plus =
 {
 	.dio.pmode = GPIO_MODE_INPUT,
@@ -79,6 +93,7 @@ digital_input_t Limit_SW_Minus =
 ptr_digital_input_t pOnboard_Btn = &Onboard_Btn;
 ptr_digital_input_t pUsr_Btn_1 = &Usr_Btn_1;
 ptr_digital_input_t pUsr_Btn_2 = &Usr_Btn_2;
+ptr_digital_input_t pUsr_Btn_3 = &Usr_Btn_3;
 ptr_digital_input_t pLimit_SW_Plus = &Limit_SW_Plus;
 ptr_digital_input_t pLimit_SW_Minus = &Limit_SW_Minus;
 

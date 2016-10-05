@@ -37,6 +37,7 @@ void DigitalInput_DebouncePin(ptr_digital_input_t di);
 extern ptr_digital_input_t pOnboard_Btn;
 extern ptr_digital_input_t pUsr_Btn_1;
 extern ptr_digital_input_t pUsr_Btn_2;
+extern ptr_digital_input_t pUsr_Btn_3;
 extern ptr_digital_input_t pLimit_SW_Plus;
 extern ptr_digital_input_t pLimit_SW_Minus;
 	

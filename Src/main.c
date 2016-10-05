@@ -87,6 +87,7 @@ int main(void)
 	SystemClock_Config();
 
 	DigitalOutput_Init(pAlarm_LED);
+	DigitalOutput_Init(pUsr_Out_1);
 
 	////////////////////////////////////////
 	// Thread creation
@@ -396,16 +397,19 @@ static void LED_Thread1(void *argument)
 	
 	for (;;)
 	{
-		if ((pOnboard_Btn->debounce.fl_input == 0) ||
-			(pUsr_Btn_1->debounce.fl_input == 0) ||
-			(pUsr_Btn_2->debounce.fl_input == 0))
-		{
-			dly = (500 / portTICK_RATE_MS);
-		}
-		else
-		{
-			dly = (1000 / portTICK_RATE_MS);
-		}
+//		if ((pOnboard_Btn->debounce.fl_input == 0) ||
+//			(pUsr_Btn_1->debounce.fl_input == 0) ||
+//			(pUsr_Btn_2->debounce.fl_input == 0) ||
+//            (pUsr_Btn_3->debounce.fl_input == 0) )
+//		{
+//			dly = (2500 / portTICK_RATE_MS);
+//		}
+//		else
+//		{
+//			dly = (1000 / portTICK_RATE_MS);
+//		}
+
+		dly = (1000 / portTICK_RATE_MS);
 		DigitalOutput_Toggle(pAlarm_LED);
 		
 		vTaskDelayUntil(&xLastWakeTime, dly);
@@ -429,8 +433,6 @@ static void Motor_Controller(void *argument)
 	
 	for (;;)
 	{
-		
-		
 		mcRecurrentFnc(0);
 		vTaskDelayUntil(&xLastWakeTime, (20 / portTICK_RATE_MS));
 	}	
@@ -481,6 +483,7 @@ static void DI_Scan(void *argument)
 	DigitalInput_Init(pOnboard_Btn);
 	DigitalInput_Init(pUsr_Btn_1);
 	DigitalInput_Init(pUsr_Btn_2);
+	DigitalInput_Init(pUsr_Btn_3);
 	DigitalInput_Init(pLimit_SW_Minus);
 	DigitalInput_Init(pLimit_SW_Plus);
 	
@@ -488,12 +491,14 @@ static void DI_Scan(void *argument)
 	pOnboard_Btn->debounce.maximum = (pOnboard_Btn->debounce.time / scan_period);
 	pUsr_Btn_1->debounce.maximum = (pUsr_Btn_1->debounce.time / scan_period);
 	pUsr_Btn_2->debounce.maximum = (pUsr_Btn_2->debounce.time / scan_period);
+	pUsr_Btn_3->debounce.maximum = (pUsr_Btn_3->debounce.time / scan_period);
 	pLimit_SW_Minus->debounce.maximum = (pLimit_SW_Minus->debounce.time / scan_period);
 	pLimit_SW_Plus->debounce.maximum = (pLimit_SW_Plus->debounce.time / scan_period);
 	
 	// Set initial filtered value same as pin value. Only after Reset
 	pUsr_Btn_1->debounce.fl_input = DigitalInput_ReadPin(pUsr_Btn_1);
 	pUsr_Btn_2->debounce.fl_input = DigitalInput_ReadPin(pUsr_Btn_2);
+	pUsr_Btn_3->debounce.fl_input = DigitalInput_ReadPin(pUsr_Btn_3);
 	pOnboard_Btn->debounce.fl_input = DigitalInput_ReadPin(pOnboard_Btn);
 	pLimit_SW_Minus->debounce.fl_input = DigitalInput_ReadPin(pLimit_SW_Minus);
 	pLimit_SW_Plus->debounce.fl_input = DigitalInput_ReadPin(pLimit_SW_Plus);
@@ -511,6 +516,7 @@ static void DI_Scan(void *argument)
 	{
 		DigitalInput_DebouncePin(pUsr_Btn_1);
 		DigitalInput_DebouncePin(pUsr_Btn_2);
+		DigitalInput_DebouncePin(pUsr_Btn_3);
 		DigitalInput_DebouncePin(pOnboard_Btn);
 		DigitalInput_DebouncePin(pLimit_SW_Minus);
 		DigitalInput_DebouncePin(pLimit_SW_Plus);
@@ -556,7 +562,16 @@ static void DI_Scan(void *argument)
 			ExecuteCommand("mc_Stop Hard");
 		}  // else - axis is on switch, is above situation
 
-		   // Front detection - update last values (User buttons - here JogP and JogN) and Limits switches
+		if (pUsr_Btn_3->debounce.fl_input == 0)
+		{
+			DigitalOutput_SetLow(pUsr_Out_1);
+		}
+		else
+		{
+			DigitalOutput_SetHigh(pUsr_Out_1);
+		}
+
+		// Front detection - update last values (User buttons - here JogP and JogN) and Limits switches
 		Btn1_old = pUsr_Btn_1->debounce.fl_input;
 		Btn2_old = pUsr_Btn_2->debounce.fl_input;
 		Limit_P_old = pLimit_SW_Plus->debounce.fl_input;
