@@ -98,6 +98,7 @@ cmdObj_t mc_GetPos = { "mc_GetPos", process_mc_GetPos, 0 };
 static mcState_t mcState;
 static mcCmdData_t mcCmdData;
 static mcAxis_t firstAxis;
+static enum Stepper_Ctrl_Event mc_events = STEPPER_CTRL_NO_EVENT;
 
 
 //=========================================================================
@@ -404,6 +405,8 @@ void mcInit(void)
 	// Initialize state machine state
 	mcState = Idle;
 
+	mc_events = STEPPER_CTRL_NO_EVENT;
+
     //----- Init of the Motor control library 
     /* Start the L6474 library to use 1 device */
     /* The L6474 registers are set with the predefined values */
@@ -468,6 +471,7 @@ int32_t mc_Get_MotorPosition(void)
 //=========================================================================
 void Send_Event_To_Stepper_Ctrl(enum Stepper_Ctrl_Event mc_ev)
 {
+	mc_events = mc_ev;
 }
 
 

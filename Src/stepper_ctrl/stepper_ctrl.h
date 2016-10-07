@@ -9,11 +9,12 @@ extern "C"
 
 enum Stepper_Ctrl_Event
 {
-    HMI_JOG_PLUS_BTN_DOWN,
-    HMI_JOG_PLUS_BTN_UP,
-    HMI_JOG_MINUS_BTN_DOWN,
-    HMI_JOG_MINUS_BTN_UP,
-    GOTO_ABS_POS            //Position should be sent before this call with another interface
+    STEPPER_CTRL_NO_EVENT,
+    STEPPER_CTRL_HMI_JOG_PLUS_BTN_DOWN,
+    STEPPER_CTRL_HMI_JOG_PLUS_BTN_UP,
+    STEPPER_CTRL_HMI_JOG_MINUS_BTN_DOWN,
+    STEPPER_CTRL_HMI_JOG_MINUS_BTN_UP,
+    STEPPER_CTRL_GOTO_ABS_POS            //Position should be sent before this call with another interface
 };
 
 typedef enum _mcDriveStatus_t
