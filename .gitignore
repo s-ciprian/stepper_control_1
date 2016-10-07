@@ -1,5 +1,7 @@
 TrueSTUDIO/
-VisualGdb/heatCtrl/CodeDB/heatCtrl-Debug-Win32/
+VisualGdb/heatCtrl/CodeDB/
+VisualGdb/heatCtrl/Debug/
+VisualGdb/heatCtrl/VisualGDBCache/
 *.o
 *.npa
 *.npd
