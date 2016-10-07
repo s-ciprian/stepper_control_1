@@ -454,32 +454,22 @@ void mcRecurrentFnc(uint32_t current_time)
 }
 
 //=========================================================================
-// Provide drive status
+// mc_Get_MotorPosition
 //
-// mcDriveReady - a new command could be executed
-// mcDriveBusy - a command execution is in progress, new commands not
-// accepted
 //=========================================================================
-mcDriveStatus_t mcGetDriverStatus(void)
-{
-	if (mcState == Idle)
-	{
-		return mcDriverReady;
-	}
-	else if (mcState == Movement_Jog)
-	{
-		return mcDriveJogging;
-	}
-	else
-	{
-		return mcDriverBusy;
-	}
-}
-
 int32_t mc_Get_MotorPosition(void)
 {
 	return firstAxis.act_pos;
 }
+
+//=========================================================================
+// mc_Get_MotorPosition
+//
+//=========================================================================
+void Send_Event_To_Stepper_Ctrl(enum Stepper_Ctrl_Event mc_ev)
+{
+}
+
 
 /**
   * @brief  This function is the User handler for the flag interrupt

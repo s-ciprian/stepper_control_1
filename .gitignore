@@ -110,3 +110,15 @@ VisualGdb/heatCtrl/CodeDB/heatCtrl-Debug-Win32/GlobalCache/001/Files.idx
 *.dat
 VisualGdb/heatCtrl/CodeDB/heatCtrl-Debug-Win32/GlobalCache/001/Names.idx
 VisualGdb/heatCtrl/CodeDB/heatCtrl-Debug-Win32.0001/codedb.lck
+*.npa
+*.npd
+*.opendb
+VisualGdb/heatCtrl/CodeDB/heatCtrl-Debug-Win32/uart2.npd
+*.npa
+VisualGdb/heatCtrl/CodeDB/heatCtrl-Debug-Win32/uart2.npd
+*.filters
+VisualGdb/heatCtrl/heatCtrl.VC.db
+VisualGdb/heatCtrl/CodeDB/heatCtrl-Debug-Win32/stepper_ctrl.npa
+VisualGdb/heatCtrl/CodeDB/heatCtrl-Debug-Win32/stm32f4xx_hal_msp.npa
+*.npa
+*.npd
