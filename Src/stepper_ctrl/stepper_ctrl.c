@@ -68,8 +68,6 @@ typedef struct _mcCmdData_t
 //================================================================================
 static inline void mcMovementEnding(void);
 
-static void stepper_ctrl_ProcessEvent(mcCmdData_t *c);
-
 static void MyFlagInterruptHandler(void);
 
 // Function prototypes for module commands
@@ -135,7 +133,7 @@ static int32_t process_mc_GoTo(int argc, char *argv[])
     mcCmdData.dir = -1;
     mcCmdData.pos = n;
 
-    stepper_ctrl_ProcessEvent(&mcCmdData);
+    stepper_ctrl_ProcessEvent();
 
 	return 1;
 }
@@ -194,7 +192,7 @@ static int32_t process_mc_HMI_JogP(int argc, char *argv[])
 		return -1;
 	}
 	
-    stepper_ctrl_ProcessEvent(&mcCmdData);
+    stepper_ctrl_ProcessEvent();
 
 	return 1;
 }
@@ -223,7 +221,7 @@ static int32_t process_mc_HMI_JogN(int argc, char *argv[])
 		return -1;
 	}
 	
-	stepper_ctrl_ProcessEvent(&mcCmdData);
+	stepper_ctrl_ProcessEvent();
 
 	return 1;
 }
@@ -267,7 +265,7 @@ static int32_t process_mc_Stop(int argc, char *argv[])
     mcCmdData.cmd = Stop;
     mcCmdData.s_type = s;
 
-    stepper_ctrl_ProcessEvent(&mcCmdData);
+    stepper_ctrl_ProcessEvent();
 
 	return 1;
 }
@@ -278,37 +276,37 @@ static int32_t process_mc_Stop(int argc, char *argv[])
 // This function will handle all events that are processed by this
 // controller
 //=========================================================================
-static void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
+void stepper_ctrl_ProcessEvent(void)
 {
 	switch (mcState) {
 		case Idle:
-            if (c->cmd == AbsPos)
+		    if (mcCmdData.cmd == AbsPos)
             {
-            	BSP_MotorControl_GoTo(firstAxis.id, c->pos);
-            	mcState = Movement_Positioning_Absolute;
+	            BSP_MotorControl_GoTo(firstAxis.id, mcCmdData.pos);
+                mcState = Movement_Positioning_Absolute;
             }
-            else if (c->cmd == RelPos)
-            {
-
-            }
-            else if (c->cmd == Jog)
-            {
-            	BSP_MotorControl_Run(firstAxis.id, c->dir);
-            	mcState = Movement_Jog;
-            }
-            else if (c->cmd == SetParam)
+		    else if (mcCmdData.cmd == RelPos)
             {
 
             }
-            else if (c->cmd == ReadParam)
+		    else if (mcCmdData.cmd == Jog)
+            {
+	            BSP_MotorControl_Run(firstAxis.id, mcCmdData.dir);
+                mcState = Movement_Jog;
+            }
+		    else if (mcCmdData.cmd == SetParam)
+            {
+
+            }
+		    else if (mcCmdData.cmd == ReadParam)
             {
 
             }
             else
             {
-            	// TODO: Add - error, command not supported
+                // TODO: Add - error, command not supported
             }
-			break;
+		    break;
 
 		case Movement_Positioning_Absolute:
 			// TODO: Handle stop command
@@ -323,25 +321,25 @@ static void stepper_ctrl_ProcessEvent(mcCmdData_t *c)
 			break;
 
 		case Movement_Jog:
-			if (c->cmd == Stop)
-			{
-				if (c->s_type == Hard)
-				{
-					BSP_MotorControl_HardStop(firstAxis.id);
-				}
-				else
-				{
-					BSP_MotorControl_SoftStop(firstAxis.id);
-				}
-				mcState = Wait_Standstill;
-			}
-			firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
+		    if (mcCmdData.cmd == Stop)
+		    {
+			    if (mcCmdData.s_type == Hard)
+			    {
+				    BSP_MotorControl_HardStop(firstAxis.id);
+			    }
+			    else
+			    {
+				    BSP_MotorControl_SoftStop(firstAxis.id);
+			    }
+			    mcState = Wait_Standstill;
+		    }
+		    firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
 			break;
 
 		case Wait_Standstill:
-		    if (c->cmd == Stop)   // Stop during DECELERATION, case when hiting limit switch while DECELERATING. Then need a HARD STOP  
+		    if (mcCmdData.cmd == Stop)   // Stop during DECELERATION, case when hiting limit switch while DECELERATING. Then need a HARD STOP  
 		    {
-			    if (c->s_type == Hard)
+			    if (mcCmdData.s_type == Hard)
 			    {
 				    BSP_MotorControl_HardStop(firstAxis.id);
 			    }
@@ -441,19 +439,6 @@ void mcInit(void)
 	   Did not want to change ST Spin Library so this is an acceptable fix.
 	*/
 	BSP_MotorControl_HardStop(firstAxis.id);
-}
-
-//=========================================================================
-// Main function of this code block
-//
-//=========================================================================
-void mcRecurrentFnc(uint32_t current_time)
-{
-	// call here function "stepper_ctrl_ProcessEvent"
-	mcCmdData.cmd = Tick;
-	mcCmdData.dir = -1;
-	mcCmdData.pos = 0;
-	stepper_ctrl_ProcessEvent(&mcCmdData);
 }
 
 //=========================================================================

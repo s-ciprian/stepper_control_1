@@ -433,7 +433,7 @@ static void Motor_Controller(void *argument)
 	
 	for (;;)
 	{
-		mcRecurrentFnc(0);
+		stepper_ctrl_ProcessEvent();
 		vTaskDelayUntil(&xLastWakeTime, (20 / portTICK_RATE_MS));
 	}	
 }

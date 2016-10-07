@@ -25,7 +25,7 @@ typedef enum _mcDriveStatus_t
 } mcDriveStatus_t;
 
 void mcInit(void);
-void mcRecurrentFnc(uint32_t current_time);
+void stepper_ctrl_ProcessEvent(void);
 int32_t mc_Get_MotorPosition(void);
 
 /* Interface used to send events to this module */
