@@ -31,3 +31,4 @@ VisualGdb/heatCtrl/stm32.mak
 VisualGdb/heatCtrl/stm32.xml
 VisualGdb/heatCtrl/CodeDB/heatCtrl-Debug-Win32.0001/codedb.lck
 
+*.html
