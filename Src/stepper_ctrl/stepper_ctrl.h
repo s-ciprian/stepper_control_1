@@ -25,11 +25,13 @@ typedef enum _mcDriveStatus_t
 } mcDriveStatus_t;
 
 void mcInit(void);
+void stepper_ctrl_Begin(void);
 void stepper_ctrl_ProcessEvent(void);
+void stepper_ctrl_End(void);
 int32_t mc_Get_MotorPosition(void);
 
 /* Interface used to send events to this module */
-void Send_Event_To_Stepper_Ctrl(enum Stepper_Ctrl_Event mc_ev);
+//void Send_Event_To_Stepper_Ctrl(enum Stepper_Ctrl_Event mc_ev);
 
 
 #ifdef __cplusplus

@@ -62,7 +62,7 @@ static volatile uint16_t gLastError;
 UART_HandleTypeDef UartHandle;
 
 
-static GPIO_PinState btnOldVal;
+//static GPIO_PinState btnOldVal;
 
 /* Private function prototypes -----------------------------------------------*/
 void Init_User_GPIO(void);
@@ -91,10 +91,11 @@ int main(void)
 
 	////////////////////////////////////////
 	// Thread creation
+    //xTaskCreate(DI_Scan, "DIS", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(LED_Thread1, "LED1", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(Motor_Controller, "MC", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(Serial_Comm, "SC", 256, NULL, 1, NULL);
-	xTaskCreate(DI_Scan, "DIS", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+    xTaskCreate(DI_Scan, "DIS", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 
 	//printf("StartScheduler()\n");
 	/* Start scheduler */
@@ -105,7 +106,7 @@ int main(void)
 
 //   volatile uint32_t param = BSP_MotorControl_CmdGetParam(0, L6474_TVAL);
 
-	btnOldVal = BSP_PB_GetState(BUTTON_USER);
+	//btnOldVal = BSP_PB_GetState(BUTTON_USER);
 
 	    /* Infinite loop */
 	while (1)
@@ -433,7 +434,10 @@ static void Motor_Controller(void *argument)
 	
 	for (;;)
 	{
+        stepper_ctrl_Begin();
 		stepper_ctrl_ProcessEvent();
+        stepper_ctrl_End();
+
 		vTaskDelayUntil(&xLastWakeTime, (20 / portTICK_RATE_MS));
 	}	
 }
@@ -521,25 +525,30 @@ static void DI_Scan(void *argument)
 		DigitalInput_DebouncePin(pLimit_SW_Minus);
 		DigitalInput_DebouncePin(pLimit_SW_Plus);
 		
+        //==============================================================
+		// HMI Button 1
+        //==============================================================
+		if ((pUsr_Btn_1->debounce.fl_input == 0) && (Btn1_old))
+		{
+			//ExecuteCommand("HMI_JogP Down");
+            //Send_Event_To_Stepper_Ctrl(STEPPER_CTRL_HMI_JOG_PLUS_BTN_DOWN);
+		}
+		else if ((Btn1_old == 0) && pUsr_Btn_1->debounce.fl_input)
+		{
+			//ExecuteCommand("HMI_JogP Up");
+            //Send_Event_To_Stepper_Ctrl(STEPPER_CTRL_HMI_JOG_PLUS_BTN_UP);
+		}
 
 		// ================== Jog Positive with Limits ==================
 		// If not on limit switch (Positive), Jog events (JogP) should work
 		if (pLimit_SW_Plus->debounce.fl_input)
 		{
-			// send Events (down/up) for HMI Button 1
-			if ((pUsr_Btn_1->debounce.fl_input == 0) && (Btn1_old))
-			{
-				ExecuteCommand("HMI_JogP Down");
-			}
-			else if ((Btn1_old == 0) && pUsr_Btn_1->debounce.fl_input)
-			{
-				ExecuteCommand("HMI_JogP Up");
-			}
+            // In old code events JogP Up/Down
 		}// else = if axis seat on limit switch ignore events
 		 // If axis just touch the Limit SW (Positive direction) - Hard Stop
 		if ((pLimit_SW_Plus->debounce.fl_input == 0) && Limit_P_old)
 		{
-			ExecuteCommand("mc_Stop Hard");
+			//ExecuteCommand("mc_Stop Hard");
 		} // else - axis is on switch, is above situation
 
 		  // ================== Jog Negative with Limits ==================
@@ -559,7 +568,7 @@ static void DI_Scan(void *argument)
 		 // If axis just touch the Limit SW (Positive direction) - Hard Stop
 		if ((pLimit_SW_Minus->debounce.fl_input == 0) && Limit_N_old)
 		{
-			ExecuteCommand("mc_Stop Hard");
+			//ExecuteCommand("mc_Stop Hard");
 		}  // else - axis is on switch, is above situation
 
 		if (pUsr_Btn_3->debounce.fl_input == 0)

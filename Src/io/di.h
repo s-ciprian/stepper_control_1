@@ -31,7 +31,7 @@ typedef digital_input_t* ptr_digital_input_t;
 void DigitalInput_Init(ptr_digital_input_t di);
 GPIO_PinState DigitalInput_ReadPin(ptr_digital_input_t di);
 void DigitalInput_DebouncePin(ptr_digital_input_t di);
-
+uint16_t DigitalInput_GetValue(const ptr_digital_input_t di);
 
 /* Exported variables ---------------------------------------------------------*/
 extern ptr_digital_input_t pOnboard_Btn;

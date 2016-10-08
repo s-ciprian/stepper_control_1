@@ -7,7 +7,7 @@
 #include "motorcontrol.h"
 #include "stepper_ctrl.h"
 #include "cmd.h"
-#include "sch_hlp.h"  // TODO: Remove this file
+#include "../io/di.h"
 
 #include "main.h"
 
@@ -25,7 +25,8 @@ typedef enum _mcState_t
 	Idle,
 	Movement_Positioning_Absolute,
 	Movement_Positioning_Relative,
-	Movement_Jog,
+	Run_Jog_Positive,
+    Run_Jog_Negative,
 	Wait_Standstill,
 	Parametrization,
 	ReadData
@@ -66,8 +67,6 @@ typedef struct _mcCmdData_t
 //================================================================================
 // Private functions protptype
 //================================================================================
-static inline void mcMovementEnding(void);
-
 static void MyFlagInterruptHandler(void);
 
 // Function prototypes for module commands
@@ -98,6 +97,8 @@ static mcCmdData_t mcCmdData;
 static mcAxis_t firstAxis;
 static enum Stepper_Ctrl_Event mc_events = STEPPER_CTRL_NO_EVENT;
 
+static uint16_t hmi_jog_p, hmi_jog_n, hmi_jog_p_old, hmi_jog_n_old;
+static uint16_t limit_p, limit_n;
 
 //=========================================================================
 // Implements GoTo command - motor driver
@@ -252,7 +253,7 @@ static int32_t process_mc_Stop(int argc, char *argv[])
 	}
 
     // ERR: Command rejected because another motor mc command execution is in progress
-    if ( (mcState != Movement_Jog) &&
+    if ( (/*mcState != Movement_Jog*/1) &&
     	 (mcState != Movement_Positioning_Absolute)	&&
     	 (mcState != Movement_Positioning_Relative) &&
 		 (mcState != Wait_Standstill) )
@@ -279,89 +280,77 @@ static int32_t process_mc_Stop(int argc, char *argv[])
 void stepper_ctrl_ProcessEvent(void)
 {
 	switch (mcState) {
-		case Idle:
-		    if (mcCmdData.cmd == AbsPos)
+		case Idle:  // Check HMI inputs and other movement commands
+            //======= Jog commands =======
+            // If not on Positive limit switch and Jog positive input ON.
+            // Check also Jog negative to avoid movement from limit to limit when both button are pressed
+		    if (!limit_p && hmi_jog_p && !hmi_jog_n)
+		    {
+    		    BSP_MotorControl_Run(firstAxis.id, FORWARD);
+                mcState = Run_Jog_Positive;
+		    }
+            // If not on Negative limit switch and Jog negative input ON
+            // Check also Jog negative to avoid movement from limit to limit when both button are pressed
+            else if (!limit_n && hmi_jog_n && !hmi_jog_p)
             {
-	            BSP_MotorControl_GoTo(firstAxis.id, mcCmdData.pos);
+    			BSP_MotorControl_Run(firstAxis.id, BACKWARD);
+                mcState = Run_Jog_Negative;
+            }
+            // Absolute positioning command
+		    else if (0)
+		    {
+                BSP_MotorControl_GoTo(firstAxis.id, mcCmdData.pos);
                 mcState = Movement_Positioning_Absolute;
-            }
-		    else if (mcCmdData.cmd == RelPos)
-            {
-
-            }
-		    else if (mcCmdData.cmd == Jog)
-            {
-	            BSP_MotorControl_Run(firstAxis.id, mcCmdData.dir);
-                mcState = Movement_Jog;
-            }
-		    else if (mcCmdData.cmd == SetParam)
-            {
-
-            }
-		    else if (mcCmdData.cmd == ReadParam)
-            {
-
-            }
+		    }
             else
             {
                 // TODO: Add - error, command not supported
             }
 		    break;
 
+		case Run_Jog_Positive:
+            firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
+
+            if (!hmi_jog_p || limit_p)  // "HMI input OFF" OR "Limit SW P activated"
+            {
+                BSP_MotorControl_HardStop(firstAxis.id);  // Stop motor
+                mcState = Wait_Standstill;    // Wait for stop
+            }
+			break;
+
+		case Run_Jog_Negative:
+            firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
+
+            if (!hmi_jog_n || limit_n)  // "HMI input OFF" OR "Limit SW N activated"
+            {
+                BSP_MotorControl_HardStop(firstAxis.id);  // Stop motor
+                mcState = Wait_Standstill;    // Wait for stop
+            }
+			break;
+
 		case Movement_Positioning_Absolute:
 			// TODO: Handle stop command
 			if (INACTIVE == BSP_MotorControl_GetDeviceState(firstAxis.id))
 			{
-				mcMovementEnding();
+				mcState = Idle;
 			}
 			break;
 
-		case Movement_Positioning_Relative:
-
-			break;
-
-		case Movement_Jog:
-		    if (mcCmdData.cmd == Stop)
-		    {
-			    if (mcCmdData.s_type == Hard)
-			    {
-				    BSP_MotorControl_HardStop(firstAxis.id);
-			    }
-			    else
-			    {
-				    BSP_MotorControl_SoftStop(firstAxis.id);
-			    }
-			    mcState = Wait_Standstill;
-		    }
-		    firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
-			break;
-
 		case Wait_Standstill:
-		    if (mcCmdData.cmd == Stop)   // Stop during DECELERATION, case when hiting limit switch while DECELERATING. Then need a HARD STOP  
+            firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
+            
+            // Stop during DECELERATION, case when hiting an limit switch while DECELERATING.
+            // Then need a HARD STOP  
+		    if (limit_p || limit_n)
 		    {
-			    if (mcCmdData.s_type == Hard)
-			    {
-				    BSP_MotorControl_HardStop(firstAxis.id);
-			    }
-			    else
-			    {
-				    BSP_MotorControl_SoftStop(firstAxis.id);
-			    }
+			    BSP_MotorControl_HardStop(firstAxis.id);
 		    }
 		
 			// Wait here until motor decelerating
 			if (INACTIVE == BSP_MotorControl_GetDeviceState(firstAxis.id))
 			{
-				mcMovementEnding();
+				mcState = Idle;
 			}
-			firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
-			break;
-
-		case Parametrization:
-
-			break;
-		case ReadData:
-
 			break;
 
 		default:
@@ -369,21 +358,6 @@ void stepper_ctrl_ProcessEvent(void)
 			// TODO: Add an error if this state is reached
 			break;
 	}
-
-}
-
-//=========================================================================
-// Put together some commands that seems to repeat at the end of movement
-// states
-//
-//=========================================================================
-static inline void mcMovementEnding(void)
-{
-	// Get current position of device. Prepare for other components that needs this
-	firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id);
-
-	mcCmdData.cmd = NoCmd;
-	mcState = Idle;
 }
 
 //=========================================================================
@@ -403,7 +377,11 @@ void mcInit(void)
 	// Initialize state machine state
 	mcState = Idle;
 
-	mc_events = STEPPER_CTRL_NO_EVENT;
+    hmi_jog_n = hmi_jog_n_old = !(DigitalInput_GetValue(pUsr_Btn_2));
+	hmi_jog_p = hmi_jog_p_old = !(DigitalInput_GetValue(pUsr_Btn_1));
+
+    limit_p = !(DigitalInput_GetValue(pLimit_SW_Plus));
+    limit_n = !(DigitalInput_GetValue(pLimit_SW_Minus));
 
     //----- Init of the Motor control library 
     /* Start the L6474 library to use 1 device */
@@ -451,14 +429,37 @@ int32_t mc_Get_MotorPosition(void)
 }
 
 //=========================================================================
+// stepper_ctrl_Begin
+//
+//=========================================================================
+void stepper_ctrl_Begin(void)
+{
+    hmi_jog_n = !(DigitalInput_GetValue(pUsr_Btn_2));
+    hmi_jog_p = !(DigitalInput_GetValue(pUsr_Btn_1));
+    limit_p = !(DigitalInput_GetValue(pLimit_SW_Plus));
+    limit_n = !(DigitalInput_GetValue(pLimit_SW_Minus));
+}
+
+//=========================================================================
+// stepper_ctrl_End
+//
+//=========================================================================
+void stepper_ctrl_End(void)
+{
+    hmi_jog_n_old = hmi_jog_n;
+    hmi_jog_p_old = hmi_jog_p;
+}
+
+
+//=========================================================================
 // mc_Get_MotorPosition
 //
 //=========================================================================
-void Send_Event_To_Stepper_Ctrl(enum Stepper_Ctrl_Event mc_ev)
-{
-	mc_events = mc_ev;
-}
-
+//void Send_Event_To_Stepper_Ctrl(enum Stepper_Ctrl_Event mc_ev)
+//{
+//	mc_events = mc_ev;
+//}
+//
 
 /**
   * @brief  This function is the User handler for the flag interrupt

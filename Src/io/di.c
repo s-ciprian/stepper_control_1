@@ -151,6 +151,14 @@ GPIO_PinState DigitalInput_ReadPin(ptr_digital_input_t di)
 }
 
 /**
+  * Get pin value after filter
+  */
+uint16_t DigitalInput_GetValue(const ptr_digital_input_t di)
+{
+    return di->debounce.fl_input;
+}
+
+/**
   * Debounce given input (pin)
   */
 void DigitalInput_DebouncePin(ptr_digital_input_t di)
