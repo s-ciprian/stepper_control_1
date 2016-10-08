@@ -32,37 +32,12 @@ typedef enum _mcState_t
 	ReadData
 } mcState_t;
 
-typedef enum _mcCmd_t
-{
-	NoCmd,
-	Tick,
-    AbsPos,
-    RelPos,
-    Jog,
-    Stop,
-    SetParam,
-    ReadParam
-} mcCmd_t;
-
-typedef enum _mcStop_t
-{
-	Hard,
-	Soft
-} mcStop_t;
-
 typedef struct _mcAxis_t
 {
 	uint8_t id;
 	int32_t act_pos;
 } mcAxis_t;
 
-typedef struct _mcCmdData_t
-{
-	mcCmd_t cmd;
-    int32_t pos;
-    int32_t dir;
-    mcStop_t s_type;
-} mcCmdData_t;
 
 //================================================================================
 // Private functions protptype
@@ -77,205 +52,18 @@ static int32_t process_mc_HMI_JogN(int argc, char *argv[]);
 static int32_t process_mc_Stop(int argc, char *argv[]);
 
 
-//===== Define commands that will be supported by this module ====
-// GoTo command - absolute positioning
-cmdObj_t mc_GoTo = { "mc_GoTo", process_mc_GoTo, 0 };
-// Jog Forward
-cmdObj_t mc_JogP = { "HMI_JogP", process_mc_HMI_JogP, 0 };
-// Jog Forward
-cmdObj_t mc_JogN = { "HMI_JogN", process_mc_HMI_JogN, 0 };
-// Stop command - Soft or Hard as parameter
-cmdObj_t mc_Stop = { "mc_Stop", process_mc_Stop, 0 };
-// Get Actual Position command - absolute position
-cmdObj_t mc_GetPos = { "mc_GetPos", process_mc_GetPos, 0 };
-
 //================================================================================
 // Private variables
 //================================================================================
 static mcState_t mcState;
-static mcCmdData_t mcCmdData;
 static mcAxis_t firstAxis;
-static enum Stepper_Ctrl_Event mc_events = STEPPER_CTRL_NO_EVENT;
 
 static uint16_t hmi_jog_p, hmi_jog_n, hmi_jog_p_old, hmi_jog_n_old;
 static uint16_t limit_p, limit_n;
 
 //=========================================================================
-// Implements GoTo command - motor driver
-//
-//=========================================================================
-static int32_t process_mc_GoTo(int argc, char *argv[])
-{
-	// TODO: check if argc == 2. If argc <> 2 then report an error
-
-    char *end;
-    int32_t n;
-
-    n = strtol(argv[1], &end, 10);
-
-    // ERR: Not possible to convert from string
-    if (errno == ERANGE)
-    {
-    	errno = 0;
-    	// TODO: Add application level error handling
-
-    	return -1;
-    }
-
-    // ERR: Command rejected because another motor mc command execution is in progress
-    if (mcState != Idle)
-    {
-    	// TODO: Add application level error handling
-
-    	return -1;
-    }
-
-    mcCmdData.cmd = AbsPos;
-    mcCmdData.dir = -1;
-    mcCmdData.pos = n;
-
-    stepper_ctrl_ProcessEvent();
-
-	return 1;
-}
-
-//=========================================================================
-// Implements Get Absolute Position command
-//
-// Note! This function returns position saved in this module and not
-// read actual position from drive chip. To be consistent after each
-// positioning or movement operation local axis position should be updated.
-// This implementation is chosen in order to minimize the commands sent to
-// chip if there is only an interrogation about some of the parameters
-// (e.g. check actual position).
-//=========================================================================
-static int32_t process_mc_GetPos(int argc, char *argv[])
-{
-	// TODO: check if argc == 2. If argc <> 2 then report an error
-
-    int32_t *p;
-
-    p = (int32_t *) strtol(argv[1], NULL, 16);
-    *p = firstAxis.act_pos;
-
-    if (errno == ERANGE)
-    {
-    	errno = 0;
-    	// TODO: Add application level error handling
-
-    	return -1;
-    }
-
-	return 1;
-}
-
-//-------------------------------------------------------------------------
-// Process Jog Positive Dir event
-//-------------------------------------------------------------------------
-static int32_t process_mc_HMI_JogP(int argc, char *argv[])
-{
-	// TODO: check if argc == 2. If argc <> 2 then report an error
-
-	if (strcmp(argv[1], "Down") == 0)
-	{
-		mcCmdData.cmd = Jog;	
-		mcCmdData.dir = FORWARD;
-	}
-	else if (strcmp(argv[1], "Up") == 0)
-	{
-		mcCmdData.cmd = Stop;
-		mcCmdData.s_type = Soft;		
-	}
-	else
-	{
-		//ERR: Not a valid direction in command. Syntax error.
-		// TODO: Add application level error handling
-		return -1;
-	}
-	
-    stepper_ctrl_ProcessEvent();
-
-	return 1;
-}
-
-//-------------------------------------------------------------------------
-// Process Jog Positive Dir event
-//-------------------------------------------------------------------------
-static int32_t process_mc_HMI_JogN(int argc, char *argv[])
-{
-	// TODO: check if argc == 2. If argc <> 2 then report an error
-
-	if (strcmp(argv[1], "Down") == 0)
-	{
-		mcCmdData.cmd = Jog;
-		mcCmdData.dir = BACKWARD;
-	}
-	else if (strcmp(argv[1], "Up") == 0)
-	{
-		mcCmdData.cmd = Stop;
-		mcCmdData.s_type = Soft;
-	}
-	else
-	{
-		//ERR: Not a valid direction in command. Syntax error.
-		// TODO: Add application level error handling
-		return -1;
-	}
-	
-	stepper_ctrl_ProcessEvent();
-
-	return 1;
-}
-
-//=========================================================================
-// Implements Stop Hard/Stop command - motor driver
-//
-//=========================================================================
-static int32_t process_mc_Stop(int argc, char *argv[])
-{
-	// TODO: check if argc == 2. If argc <> 2 then report an error
-
-	mcStop_t s;
-
-	if (strcmp(argv[1], "Hard") == 0)
-	{
-		s = Hard;
-	}
-	else if (strcmp(argv[1], "Soft") == 0)
-	{
-		s = Soft;
-	}
-	else
-	{
-		//ERR: Not a valid parameter for this command. Syntax error.
-		// TODO: Add application level error handling
-		return -1;
-	}
-
-    // ERR: Command rejected because another motor mc command execution is in progress
-    if ( (/*mcState != Movement_Jog*/1) &&
-    	 (mcState != Movement_Positioning_Absolute)	&&
-    	 (mcState != Movement_Positioning_Relative) &&
-		 (mcState != Wait_Standstill) )
-    {
-    	// TODO: Add application level error handling
-
-    	return -1;
-    }
-
-    mcCmdData.cmd = Stop;
-    mcCmdData.s_type = s;
-
-    stepper_ctrl_ProcessEvent();
-
-	return 1;
-}
-
-//=========================================================================
 // Controller function
 //
-// This function will handle all events that are processed by this
-// controller
 //=========================================================================
 void stepper_ctrl_ProcessEvent(void)
 {
@@ -299,7 +87,7 @@ void stepper_ctrl_ProcessEvent(void)
             // Absolute positioning command
 		    else if (0)
 		    {
-                BSP_MotorControl_GoTo(firstAxis.id, mcCmdData.pos);
+                BSP_MotorControl_GoTo(firstAxis.id, 0);
                 mcState = Movement_Positioning_Absolute;
 		    }
             else
@@ -367,13 +155,6 @@ void stepper_ctrl_ProcessEvent(void)
 //=========================================================================
 void mcInit(void)
 {
-	// Register commands
-	cmdAddNewCommand(&mc_GoTo);
-	cmdAddNewCommand(&mc_GetPos);
-	cmdAddNewCommand(&mc_JogP);
-	cmdAddNewCommand(&mc_JogN);
-	cmdAddNewCommand(&mc_Stop);
-
 	// Initialize state machine state
 	mcState = Idle;
 
@@ -450,16 +231,6 @@ void stepper_ctrl_End(void)
     hmi_jog_p_old = hmi_jog_p;
 }
 
-
-//=========================================================================
-// mc_Get_MotorPosition
-//
-//=========================================================================
-//void Send_Event_To_Stepper_Ctrl(enum Stepper_Ctrl_Event mc_ev)
-//{
-//	mc_events = mc_ev;
-//}
-//
 
 /**
   * @brief  This function is the User handler for the flag interrupt

@@ -62,14 +62,13 @@ static volatile uint16_t gLastError;
 UART_HandleTypeDef UartHandle;
 
 
-//static GPIO_PinState btnOldVal;
-
 /* Private function prototypes -----------------------------------------------*/
 void Init_User_GPIO(void);
 static void LED_Thread1(void *argument);
 static void Motor_Controller(void *argument);
 static void Serial_Comm(void *argument);
 static void DI_Scan(void *argument);
+
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -102,10 +101,7 @@ int main(void)
 	vTaskStartScheduler();	
 	///////////////////////////////////////
 
-    // old code moved in function void originalTestCode(void)
-
-//   volatile uint32_t param = BSP_MotorControl_CmdGetParam(0, L6474_TVAL);
-
+    //   volatile uint32_t param = BSP_MotorControl_CmdGetParam(0, L6474_TVAL);
 	//btnOldVal = BSP_PB_GetState(BUTTON_USER);
 
 	    /* Infinite loop */
@@ -398,18 +394,6 @@ static void LED_Thread1(void *argument)
 	
 	for (;;)
 	{
-//		if ((pOnboard_Btn->debounce.fl_input == 0) ||
-//			(pUsr_Btn_1->debounce.fl_input == 0) ||
-//			(pUsr_Btn_2->debounce.fl_input == 0) ||
-//            (pUsr_Btn_3->debounce.fl_input == 0) )
-//		{
-//			dly = (2500 / portTICK_RATE_MS);
-//		}
-//		else
-//		{
-//			dly = (1000 / portTICK_RATE_MS);
-//		}
-
 		dly = (1000 / portTICK_RATE_MS);
 		DigitalOutput_Toggle(pAlarm_LED);
 		
@@ -480,8 +464,6 @@ static void DI_Scan(void *argument)
 {
 	portTickType xLastWakeTime = 0;
 	portTickType scan_period = 10;  // Scan period in ms
-	// Front detection - last values
-	uint16_t Btn1_old, Btn2_old, Limit_P_old, Limit_N_old;
 	
 	// Initialize inputs
 	DigitalInput_Init(pOnboard_Btn);
@@ -507,13 +489,6 @@ static void DI_Scan(void *argument)
 	pLimit_SW_Minus->debounce.fl_input = DigitalInput_ReadPin(pLimit_SW_Minus);
 	pLimit_SW_Plus->debounce.fl_input = DigitalInput_ReadPin(pLimit_SW_Plus);
 
-	// Front detection - init
-	Btn1_old = pUsr_Btn_1->debounce.fl_input;
-	Btn2_old = pUsr_Btn_2->debounce.fl_input;
-	Limit_P_old = pLimit_SW_Plus->debounce.fl_input;
-	Limit_N_old = pLimit_SW_Minus->debounce.fl_input;
-
-	
 	xLastWakeTime = xTaskGetTickCount();
 	
 	for (;;)
@@ -525,52 +500,8 @@ static void DI_Scan(void *argument)
 		DigitalInput_DebouncePin(pLimit_SW_Minus);
 		DigitalInput_DebouncePin(pLimit_SW_Plus);
 		
-        //==============================================================
-		// HMI Button 1
-        //==============================================================
-		if ((pUsr_Btn_1->debounce.fl_input == 0) && (Btn1_old))
-		{
-			//ExecuteCommand("HMI_JogP Down");
-            //Send_Event_To_Stepper_Ctrl(STEPPER_CTRL_HMI_JOG_PLUS_BTN_DOWN);
-		}
-		else if ((Btn1_old == 0) && pUsr_Btn_1->debounce.fl_input)
-		{
-			//ExecuteCommand("HMI_JogP Up");
-            //Send_Event_To_Stepper_Ctrl(STEPPER_CTRL_HMI_JOG_PLUS_BTN_UP);
-		}
-
-		// ================== Jog Positive with Limits ==================
-		// If not on limit switch (Positive), Jog events (JogP) should work
-		if (pLimit_SW_Plus->debounce.fl_input)
-		{
-            // In old code events JogP Up/Down
-		}// else = if axis seat on limit switch ignore events
-		 // If axis just touch the Limit SW (Positive direction) - Hard Stop
-		if ((pLimit_SW_Plus->debounce.fl_input == 0) && Limit_P_old)
-		{
-			//ExecuteCommand("mc_Stop Hard");
-		} // else - axis is on switch, is above situation
-
-		  // ================== Jog Negative with Limits ==================
-		  //  If not on limit switch (Negative), Jog events (JogP) should work
-		if (pLimit_SW_Minus->debounce.fl_input)
-		{
-
-			if ((pUsr_Btn_2->debounce.fl_input == 0) && (Btn2_old))
-			{
-				ExecuteCommand("HMI_JogN Down");
-			}
-			else if ((Btn2_old == 0) && pUsr_Btn_2->debounce.fl_input)
-			{
-				ExecuteCommand("HMI_JogN Up");
-			}
-		}// else = if axis seat on limit switch ignore events
-		 // If axis just touch the Limit SW (Positive direction) - Hard Stop
-		if ((pLimit_SW_Minus->debounce.fl_input == 0) && Limit_N_old)
-		{
-			//ExecuteCommand("mc_Stop Hard");
-		}  // else - axis is on switch, is above situation
-
+ 
+        // Test Input and Output
 		if (pUsr_Btn_3->debounce.fl_input == 0)
 		{
 			DigitalOutput_SetLow(pUsr_Out_1);
@@ -580,12 +511,6 @@ static void DI_Scan(void *argument)
 			DigitalOutput_SetHigh(pUsr_Out_1);
 		}
 
-		// Front detection - update last values (User buttons - here JogP and JogN) and Limits switches
-		Btn1_old = pUsr_Btn_1->debounce.fl_input;
-		Btn2_old = pUsr_Btn_2->debounce.fl_input;
-		Limit_P_old = pLimit_SW_Plus->debounce.fl_input;
-		Limit_N_old = pLimit_SW_Minus->debounce.fl_input;
-		
 		vTaskDelayUntil(&xLastWakeTime, (scan_period / portTICK_RATE_MS));
 	}
 }
