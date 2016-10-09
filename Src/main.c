@@ -47,30 +47,47 @@
 #include "cmd.h"
 #include "io/do.h"
 #include "io/di.h"
+#include "hc_app/hca.h"
 
-/** @defgroup IHM01A1_Example_for_1_motor_device
-  * @{
-  */ 
+///////////////////////////////////////////////////////////////////////////////
+// Private typedef
+///////////////////////////////////////////////////////////////////////////////
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-#define CMD_BUF_SIZE 32
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
+
+///////////////////////////////////////////////////////////////////////////////
+// Private define
+///////////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Private macro
+///////////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Private variables
+///////////////////////////////////////////////////////////////////////////////
 static volatile uint16_t gLastError;
 /* UART handler declaration */
 UART_HandleTypeDef UartHandle;
 
 
-/* Private function prototypes -----------------------------------------------*/
-void Init_User_GPIO(void);
+///////////////////////////////////////////////////////////////////////////////
+// Private function prototypes
+///////////////////////////////////////////////////////////////////////////////
+// Tasks
 static void LED_Thread1(void *argument);
 static void Motor_Controller(void *argument);
 static void Serial_Comm(void *argument);
 static void DI_Scan(void *argument);
+static void Heat_Controller_App(void *argument);
+// Not used - To Be Deleted
+void originalTestCode(void);
 
 
-/* Private functions ---------------------------------------------------------*/
+///////////////////////////////////////////////////////////////////////////////
+// Public functions - implementation
+///////////////////////////////////////////////////////////////////////////////
 
 /**
   * @brief  Main program
@@ -95,6 +112,7 @@ int main(void)
 	xTaskCreate(Motor_Controller, "MC", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(Serial_Comm, "SC", 256, NULL, 1, NULL);
     xTaskCreate(DI_Scan, "DIS", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+    xTaskCreate(Heat_Controller_App, "HCA", configMINIMAL_STACK_SIZE, NULL, 1, NULL); 
 
 	//printf("StartScheduler()\n");
 	/* Start scheduler */
@@ -108,7 +126,7 @@ int main(void)
 	while (1)
 	{
 		// How to return motor Actual Position in variable "actPos" using command "mc_GetPos &actPos"
-	    // Position could be get directly using mc_Get_MotorPosition
+	    // Position could be get directly using stepper_ctrl_Get_Actual_Position
 		//// snprintf(cmdBuf, 32, "mc_GetPos %p", &actPos);  // actPos is signed 32 bits
 		//// ExecuteCommand(cmdBuf);
 	}
@@ -150,6 +168,18 @@ void assert_failed(uint8_t* file, uint32_t line)
 	}
 }
 #endif
+
+
+void vApplicationStackOverflowHook(xTaskHandle *pxTask, signed char *pcTaskName)
+{
+	while (1)
+		;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Private functions - implementation
+///////////////////////////////////////////////////////////////////////////////
 
 /**
   *
@@ -372,15 +402,6 @@ void originalTestCode(void)
 }
 
 /**
-  * 
-  */
-void vApplicationStackOverflowHook(xTaskHandle *pxTask, signed char *pcTaskName)
-{
-	while (1)
-		;
-}
-
-/**
   * @brief  Toggle LED1
   * @param  thread not used
   * @retval None
@@ -406,13 +427,10 @@ static void LED_Thread1(void *argument)
   */
 static void Motor_Controller(void *argument)
 {
-	// Task Variables 
-	//==================================================
 	portTickType xLastWakeTime;
-	// Task code
-	//==================================================	
+
 	mcInit();
-		
+	
 	xLastWakeTime = xTaskGetTickCount();
 
 	
@@ -443,7 +461,7 @@ static void Serial_Comm(void *argument)
 	
 	for (;;)
 	{
-		act_pos = mc_Get_MotorPosition();
+		act_pos = stepper_ctrl_Get_Actual_Position();
 		/* Get the value of the status register of the L6474 */
 		statusRegister = BSP_MotorControl_CmdGetStatus(0);
 		
@@ -513,6 +531,28 @@ static void DI_Scan(void *argument)
 
 		vTaskDelayUntil(&xLastWakeTime, (scan_period / portTICK_RATE_MS));
 	}
+}
+
+/**
+  * Heater Controller Application - top component of the application
+  */
+static void Heat_Controller_App(void *argument)
+{
+	portTickType xLastWakeTime = 0;
+	portTickType hca_scan_period = 100;  // Scan period in ms
+
+    hca_Init();
+
+
+	for (;;)
+	{
+        hca_Begin();
+        hca_ProcessEvent();
+        hca_End();
+
+        // TODO: Add here function for this task
+        vTaskDelayUntil(&xLastWakeTime, (hca_scan_period / portTICK_RATE_MS));
+    }
 }
 
 /**** END OF FILE ****/

@@ -145,6 +145,7 @@
     <ClCompile Include="..\..\Src\clock_f4.c" />
     <ClCompile Include="..\..\Src\cmd\cmd.c" />
     <ClCompile Include="..\..\Src\comm\uart2.c" />
+    <ClCompile Include="..\..\Src\hc_app\hca.c" />
     <ClCompile Include="..\..\Src\io\di.c" />
     <ClCompile Include="..\..\Src\io\do.c" />
     <ClCompile Include="..\..\Src\main.c" />
@@ -292,6 +293,7 @@
     <ClInclude Include="..\..\Inc\stm32f4xx_it.h" />
     <ClInclude Include="..\..\Src\cmd\cmd.h" />
     <ClInclude Include="..\..\Src\comm\uart2.h" />
+    <ClInclude Include="..\..\Src\hc_app\hca.h" />
     <ClInclude Include="..\..\Src\io\di.h" />
     <ClInclude Include="..\..\Src\io\dio_typedef.h" />
     <ClInclude Include="..\..\Src\io\do.h" />

@@ -1,12 +1,8 @@
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-#include <errno.h>
+#include "limits.h"
 #include "stm32f4xx_nucleo.h"
 #include "motorcontrol.h"
 #include "stepper_ctrl.h"
-#include "cmd.h"
 #include "../io/di.h"
 
 #include "main.h"
@@ -17,9 +13,9 @@
 #include "stm32f4xx_nucleo_ihm01a1.h"
 #endif
 
-//================================================================================
-//
-//================================================================================
+///////////////////////////////////////////////////////////////////////////////
+// Types definitions
+///////////////////////////////////////////////////////////////////////////////
 typedef enum _mcState_t
 {
 	Idle,
@@ -39,9 +35,15 @@ typedef struct _mcAxis_t
 } mcAxis_t;
 
 
-//================================================================================
+///////////////////////////////////////////////////////////////////////////////
+// Private define
+///////////////////////////////////////////////////////////////////////////////
+#define POSITION_SETPOINT_INVALID    INT_MAX
+
+
+///////////////////////////////////////////////////////////////////////////////
 // Private functions protptype
-//================================================================================
+///////////////////////////////////////////////////////////////////////////////
 static void MyFlagInterruptHandler(void);
 
 // Function prototypes for module commands
@@ -52,19 +54,24 @@ static int32_t process_mc_HMI_JogN(int argc, char *argv[]);
 static int32_t process_mc_Stop(int argc, char *argv[]);
 
 
-//================================================================================
+///////////////////////////////////////////////////////////////////////////////
 // Private variables
-//================================================================================
+///////////////////////////////////////////////////////////////////////////////
 static mcState_t mcState;
 static mcAxis_t firstAxis;
 
 static uint16_t hmi_jog_p, hmi_jog_n, hmi_jog_p_old, hmi_jog_n_old;
 static uint16_t limit_p, limit_n;
 
-//=========================================================================
+static int32_t position_setpoint = POSITION_SETPOINT_INVALID;
+
+///////////////////////////////////////////////////////////////////////////////
+// Public functions - implementation
+///////////////////////////////////////////////////////////////////////////////
+
+//******************************************************************************
 // Controller function
-//
-//=========================================================================
+//******************************************************************************
 void stepper_ctrl_ProcessEvent(void)
 {
 	switch (mcState) {
@@ -85,9 +92,13 @@ void stepper_ctrl_ProcessEvent(void)
                 mcState = Run_Jog_Negative;
             }
             // Absolute positioning command
-		    else if (0)
+		    else if (position_setpoint != POSITION_SETPOINT_INVALID)
 		    {
-                BSP_MotorControl_GoTo(firstAxis.id, 0);
+                // Send new setpoint to motor driver
+                BSP_MotorControl_GoTo(firstAxis.id, position_setpoint);
+                // And invalidate setpoit variable
+                position_setpoint = POSITION_SETPOINT_INVALID;
+                // Chage state and wait for the end of the movement
                 mcState = Movement_Positioning_Absolute;
 		    }
             else
@@ -117,7 +128,15 @@ void stepper_ctrl_ProcessEvent(void)
 			break;
 
 		case Movement_Positioning_Absolute:
-			// TODO: Handle stop command
+			// TODO: Stop command ?
+            firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
+
+		    if (limit_p || limit_n)
+		    {
+			    BSP_MotorControl_HardStop(firstAxis.id);
+                mcState = Wait_Standstill;    // Wait for stop
+		    }
+
 			if (INACTIVE == BSP_MotorControl_GetDeviceState(firstAxis.id))
 			{
 				mcState = Idle;
@@ -148,11 +167,11 @@ void stepper_ctrl_ProcessEvent(void)
 	}
 }
 
-//=========================================================================
+//******************************************************************************
 // Initialization function
 //
 // This function will register commands supported by this module
-//=========================================================================
+//******************************************************************************
 void mcInit(void)
 {
 	// Initialize state machine state
@@ -163,6 +182,8 @@ void mcInit(void)
 
     limit_p = !(DigitalInput_GetValue(pLimit_SW_Plus));
     limit_n = !(DigitalInput_GetValue(pLimit_SW_Minus));
+
+    position_setpoint = POSITION_SETPOINT_INVALID;
 
     //----- Init of the Motor control library 
     /* Start the L6474 library to use 1 device */
@@ -200,19 +221,28 @@ void mcInit(void)
 	BSP_MotorControl_HardStop(firstAxis.id);
 }
 
-//=========================================================================
-// mc_Get_MotorPosition
+//******************************************************************************
+// stepper_ctrl_Get_Actual_Position
 //
-//=========================================================================
-int32_t mc_Get_MotorPosition(void)
+//******************************************************************************
+int32_t stepper_ctrl_Get_Actual_Position(void)
 {
 	return firstAxis.act_pos;
 }
 
-//=========================================================================
+//******************************************************************************
+// Function stepper_ctrl_Set_New_Position
+//******************************************************************************
+void stepper_ctrl_Set_New_Position(int32_t new_pos)
+{
+    position_setpoint = new_pos;
+}
+
+
+//******************************************************************************
 // stepper_ctrl_Begin
 //
-//=========================================================================
+//******************************************************************************
 void stepper_ctrl_Begin(void)
 {
     hmi_jog_n = !(DigitalInput_GetValue(pUsr_Btn_2));
@@ -221,17 +251,19 @@ void stepper_ctrl_Begin(void)
     limit_n = !(DigitalInput_GetValue(pLimit_SW_Minus));
 }
 
-//=========================================================================
+//******************************************************************************
 // stepper_ctrl_End
 //
-//=========================================================================
+//******************************************************************************
 void stepper_ctrl_End(void)
 {
     hmi_jog_n_old = hmi_jog_n;
     hmi_jog_p_old = hmi_jog_p;
 }
 
-
+///////////////////////////////////////////////////////////////////////////////
+// Private functions - implementation
+///////////////////////////////////////////////////////////////////////////////
 /**
   * @brief  This function is the User handler for the flag interrupt
   * @param  None

@@ -11,7 +11,8 @@ void mcInit(void);
 void stepper_ctrl_Begin(void);
 void stepper_ctrl_ProcessEvent(void);
 void stepper_ctrl_End(void);
-int32_t mc_Get_MotorPosition(void);
+int32_t stepper_ctrl_Get_Actual_Position(void);
+void stepper_ctrl_Set_New_Position(int32_t new_pos);
 
 #ifdef __cplusplus
 }
