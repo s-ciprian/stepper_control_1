@@ -539,7 +539,10 @@ static void DI_Scan(void *argument)
 static void Heat_Controller_App(void *argument)
 {
 	portTickType xLastWakeTime = 0;
-	portTickType hca_scan_period = 20;  // Scan period in ms
+    // Scan period in ms.
+    // Should be the same as for Motor_Controller else JOG motion is interrupted
+    // because how data is passed between this task and Motor_Controller
+	portTickType hca_scan_period = 20;
 
     hca_Init();
 

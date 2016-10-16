@@ -15,20 +15,6 @@ struct HCA_Data
     int32_t  actual_position;
 };
 
-enum HCA_State    // Application Main Controller state
-{
-    Reference_Mode,
-    Jog_Mode,
-    Positioning_Mode
-};
-
-enum JMC_State    // Jog Mode Controller state
-{
-    Idle,
-    Jog_P,
-    Jog_N
-};
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Private define
@@ -87,14 +73,42 @@ void hca_Begin(void)
 //********************************************************************************
 void hca_ProcessEvent(void)
 {
+    // Application Main Controller states
+    enum HCA_State
+    {
+        Reference_Mode,
+        Set_Start_Position,
+        Wait_Start_Position,
+        Jog_Mode,
+        Positioning_Mode
+    };
+
 	static enum HCA_State hca_state = Reference_Mode;
+    int32_t rmc_ret;
 
 	switch (hca_state)
 	{
 	case Reference_Mode:
-        Reference_Mode_Controller();
-		hca_state = Jog_Mode; // Stub - just for test
+        rmc_ret = Reference_Mode_Controller();
+		if (rmc_ret)
+        {
+		    hca_state = Set_Start_Position;
+        }
 		break;
+
+    case Set_Start_Position:
+        hca_data.target_position = -200;
+        stepper_ctrl_Set_New_Position(hca_data.target_position);
+        hca_state = Wait_Start_Position;
+        break;
+
+	case Wait_Start_Position:
+        hca_data.actual_position = stepper_ctrl_Get_Actual_Position();
+        if (hca_data.actual_position == hca_data.target_position)
+        {
+            hca_state = Jog_Mode;
+        }
+        break;
 
 	case Jog_Mode:
         Jog_Mode_Controller();
@@ -108,25 +122,6 @@ void hca_ProcessEvent(void)
 		hca_state = Reference_Mode;
 		break;
 	}
-
-    //======= Testing position commands =======
-//    hca_data.actual_position = stepper_ctrl_Get_Actual_Position();
-//
-//    if (hca_data.actual_position != hca_data.target_position)
-//    {
-//        stepper_ctrl_Set_New_Position(hca_data.target_position);
-//    }
-//    else
-//    {
-//        if (hca_data.actual_position == 0)
-//        {
-//            hca_data.target_position = -600;
-//        }
-//        else if  (hca_data.actual_position == -600)
-//        {
-//            hca_data.target_position = 0;
-//        }
-//    }
 }
 
 //********************************************************************************
@@ -143,9 +138,19 @@ void hca_End(void)
 
 //********************************************************************************
 // Function Jog_Mode_Controller
+// Moving axix in Jog mode by two HMI buttons. Stop when limits switches are hit
 //********************************************************************************
 static void Jog_Mode_Controller(void)
 {
+    // Jog Mode Controller states
+    enum JMC_State
+    {
+        Idle,
+        Jog_P,
+        Jog_N
+    };
+
+    // State of Reference Mode Controller state machine
     static enum JMC_State jmc_state = Idle;
 
     switch (jmc_state)
@@ -191,14 +196,93 @@ static void Jog_Mode_Controller(void)
 
 //********************************************************************************
 // Function Reference_Mode_Controller()
+// This function is called at 20 ms recurrence by OS
 // Returns:
 //  0 = REF not done, 1 = REF done, -1 = Not possible to do REF, error 
 //********************************************************************************
 static int32_t Reference_Mode_Controller(void)
 {
-    return 0;
+    // Possible states for Reference Mode Controller state machine
+    enum RMC_State
+    {
+        Start_Delay,
+        Search_Ref_Switch,
+        Ref_Safe_Position,
+        Wait_For_Stop,
+        Ref_Done
+    };
+    // Delays used by RMC state machine. This function is called @ 20 ms
+    enum DELAYS
+    {
+        START_DELAY = 20,      // x20 ms
+        WAIT_STOP_DELAY = 30,
+    };
+
+    // Return value. TODO - Add a timeout in state Search_Ref_Switch and return -1 if timeout
+    int32_t rmc_return = 0;
+    // State of Reference Mode Controller state machine
+    static enum RMC_State rmc_state = Start_Delay;
+    // Generic timer (now set with initial delay, before to start REF process)
+    static uint8_t rmc_tmr = START_DELAY;
+
+	switch (rmc_state)
+    {
+    // Short delay after MCU, OS has started (not really necessary)
+    case Start_Delay:
+	    if (rmc_tmr)
+	    {
+		    rmc_tmr--;
+	    }
+	    else
+        {
+            rmc_state = Search_Ref_Switch;
+        }
+        break;
+
+    // Simulate a JOG Plus command to hit the limit switch. This is REFERENCE position
+    case Search_Ref_Switch:
+	    if (!limit_p)   // If not on limit switch go to Plus direction
+	    {
+		    stepper_ctrl_Jog_P();
+	    }
+	    else    // Stop when hit positive limit switch
+        {
+            stepper_ctrl_Stop();
+            rmc_tmr = WAIT_STOP_DELAY;      // Set a delay, see below why
+            rmc_state = Wait_For_Stop;
+        }
+        break;
+
+    // Wait for motor to decelerate and stop
+    case Wait_For_Stop:
+        if (rmc_tmr)    // Decrement timer
+        {
+            rmc_tmr--;
+        }
+        else
+        {
+            // Set zero position into motor controller chip
+            stepper_ctrl_Set_Home();
+            rmc_state = Ref_Done;
+        }
+        break;
+
+    // Reference is DONE
+    case Ref_Done:
+        rmc_return = 1; // Sucessful
+        break;
+
+    default:
+        rmc_state = Search_Ref_Switch;
+        break;
+    }
+
+    return rmc_return;
 }
 
+//********************************************************************************
+// Function Jog_Mode_Controller
+//********************************************************************************
 static void Positioning_Mode_Controller(void)
 {
 

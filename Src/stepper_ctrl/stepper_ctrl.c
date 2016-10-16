@@ -201,6 +201,14 @@ void stepper_ctrl_Set_New_Position(int32_t new_pos)
 }
 
 //******************************************************************************
+// Function stepper_ctrl_Set_Home
+//******************************************************************************
+void stepper_ctrl_Set_Home(void)
+{
+     BSP_MotorControl_SetHome(firstAxis.id);
+}
+
+//******************************************************************************
 // Function stepper_ctrl_Jog_N
 //******************************************************************************
 void stepper_ctrl_Jog_N(void)
