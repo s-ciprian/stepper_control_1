@@ -539,7 +539,7 @@ static void DI_Scan(void *argument)
 static void Heat_Controller_App(void *argument)
 {
 	portTickType xLastWakeTime = 0;
-	portTickType hca_scan_period = 100;  // Scan period in ms
+	portTickType hca_scan_period = 20;  // Scan period in ms
 
     hca_Init();
 

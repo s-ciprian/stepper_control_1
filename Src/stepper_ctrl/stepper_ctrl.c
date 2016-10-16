@@ -19,13 +19,11 @@
 typedef enum _mcState_t
 {
 	Idle,
-	Movement_Positioning_Absolute,
-	Movement_Positioning_Relative,
+    Running_Jog,
+	Movement_Positioning,
 	Run_Jog_Positive,
     Run_Jog_Negative,
 	Wait_Standstill,
-	Parametrization,
-	ReadData
 } mcState_t;
 
 typedef struct _mcAxis_t
@@ -46,13 +44,6 @@ typedef struct _mcAxis_t
 ///////////////////////////////////////////////////////////////////////////////
 static void MyFlagInterruptHandler(void);
 
-// Function prototypes for module commands
-static int32_t process_mc_GoTo(int argc, char *argv[]);
-static int32_t process_mc_GetPos(int argc, char *argv[]);
-static int32_t process_mc_HMI_JogP(int argc, char *argv[]);
-static int32_t process_mc_HMI_JogN(int argc, char *argv[]);
-static int32_t process_mc_Stop(int argc, char *argv[]);
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Private variables
@@ -60,8 +51,7 @@ static int32_t process_mc_Stop(int argc, char *argv[]);
 static mcState_t mcState;
 static mcAxis_t firstAxis;
 
-static uint16_t hmi_jog_p, hmi_jog_n, hmi_jog_p_old, hmi_jog_n_old;
-static uint16_t limit_p, limit_n;
+static uint16_t jog_p, jog_n, motion_stop;
 
 static int32_t position_setpoint = POSITION_SETPOINT_INVALID;
 
@@ -74,96 +64,74 @@ static int32_t position_setpoint = POSITION_SETPOINT_INVALID;
 //******************************************************************************
 void stepper_ctrl_ProcessEvent(void)
 {
-	switch (mcState) {
-		case Idle:  // Check HMI inputs and other movement commands
-            //======= Jog commands =======
-            // If not on Positive limit switch and Jog positive input ON.
-            // Check also Jog negative to avoid movement from limit to limit when both button are pressed
-		    if (!limit_p && hmi_jog_p && !hmi_jog_n)
-		    {
-    		    BSP_MotorControl_Run(firstAxis.id, FORWARD);
-                mcState = Run_Jog_Positive;
-		    }
-            // If not on Negative limit switch and Jog negative input ON
-            // Check also Jog negative to avoid movement from limit to limit when both button are pressed
-            else if (!limit_n && hmi_jog_n && !hmi_jog_p)
-            {
-    			BSP_MotorControl_Run(firstAxis.id, BACKWARD);
-                mcState = Run_Jog_Negative;
-            }
-            // Absolute positioning command
-		    else if (position_setpoint != POSITION_SETPOINT_INVALID)
-		    {
-                // Send new setpoint to motor driver
-                BSP_MotorControl_GoTo(firstAxis.id, position_setpoint);
-                // And invalidate setpoit variable
-                position_setpoint = POSITION_SETPOINT_INVALID;
-                // Chage state and wait for the end of the movement
-                mcState = Movement_Positioning_Absolute;
-		    }
-            else
-            {
-                // TODO: Add - error, command not supported
-            }
-		    break;
+    switch (mcState)
+    {
+    case Idle:
+        if (jog_p)
+	    {
+            BSP_MotorControl_Run(firstAxis.id, FORWARD);
+            mcState = Run_Jog_Positive;
+        }
+        else if (jog_n)
+        {
+            BSP_MotorControl_Run(firstAxis.id, BACKWARD);
+            mcState = Run_Jog_Negative;
+        }
+        // Absolute positioning command
+		else if (position_setpoint != POSITION_SETPOINT_INVALID)
+		{
+            // Send new setpoint to motor driver
+            BSP_MotorControl_GoTo(firstAxis.id, position_setpoint);
+            // And invalidate setpoit variable
+            position_setpoint = POSITION_SETPOINT_INVALID;
+            // Chage state and wait for the end of the movement
+            mcState = Wait_Standstill;
+		}
+        //else - command not supported
+		break;
 
-		case Run_Jog_Positive:
-            firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
+	case Run_Jog_Positive:
+        firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
 
-            if (!hmi_jog_p || limit_p)  // "HMI input OFF" OR "Limit SW P activated"
-            {
-                BSP_MotorControl_HardStop(firstAxis.id);  // Stop motor
-                mcState = Wait_Standstill;    // Wait for stop
-            }
-			break;
+		if (!jog_p)
+		{
+            BSP_MotorControl_HardStop(firstAxis.id);  // Stop motor
+            mcState = Wait_Standstill;    // Wait for stop
+		}
+        //else - ignore other commands
+		break;
 
-		case Run_Jog_Negative:
-            firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
+	case Run_Jog_Negative:
+        firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
 
-            if (!hmi_jog_n || limit_n)  // "HMI input OFF" OR "Limit SW N activated"
-            {
-                BSP_MotorControl_HardStop(firstAxis.id);  // Stop motor
-                mcState = Wait_Standstill;    // Wait for stop
-            }
-			break;
+		if (!jog_n)
+		{
+            BSP_MotorControl_HardStop(firstAxis.id);  // Stop motor
+            mcState = Wait_Standstill;    // Wait for stop
+		}
+        //else - ignore other commands
+		break;
 
-		case Movement_Positioning_Absolute:
-			// TODO: Stop command ?
-            firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
+	case Wait_Standstill:
+        firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
 
-		    if (limit_p || limit_n)
-		    {
-			    BSP_MotorControl_HardStop(firstAxis.id);
-                mcState = Wait_Standstill;    // Wait for stop
-		    }
+        // Stop during Positionining movement (e.g limit switch or EStop)
+		if (motion_stop)
+		{
+            BSP_MotorControl_HardStop(firstAxis.id);  // Stop motor
+            mcState = Wait_Standstill;    // Keep this state
+		}
 
-			if (INACTIVE == BSP_MotorControl_GetDeviceState(firstAxis.id))
-			{
-				mcState = Idle;
-			}
-			break;
-
-		case Wait_Standstill:
-            firstAxis.act_pos = BSP_MotorControl_GetPosition(firstAxis.id); /* Axis actual position */
-            
-            // Stop during DECELERATION, case when hiting an limit switch while DECELERATING.
-            // Then need a HARD STOP  
-		    if (limit_p || limit_n)
-		    {
-			    BSP_MotorControl_HardStop(firstAxis.id);
-		    }
-		
-			// Wait here until motor decelerating
-			if (INACTIVE == BSP_MotorControl_GetDeviceState(firstAxis.id))
-			{
-				mcState = Idle;
-			}
-			break;
-
-		default:
+        // End of movement
+		if (INACTIVE == BSP_MotorControl_GetDeviceState(firstAxis.id))
+		{
 			mcState = Idle;
-			// TODO: Add an error if this state is reached
-			break;
+		}
+		break;
+
+	default:
+		mcState = Idle;
+		break;
 	}
 }
 
@@ -176,12 +144,6 @@ void mcInit(void)
 {
 	// Initialize state machine state
 	mcState = Idle;
-
-    hmi_jog_n = hmi_jog_n_old = !(DigitalInput_GetValue(pUsr_Btn_2));
-	hmi_jog_p = hmi_jog_p_old = !(DigitalInput_GetValue(pUsr_Btn_1));
-
-    limit_p = !(DigitalInput_GetValue(pLimit_SW_Plus));
-    limit_n = !(DigitalInput_GetValue(pLimit_SW_Minus));
 
     position_setpoint = POSITION_SETPOINT_INVALID;
 
@@ -238,6 +200,26 @@ void stepper_ctrl_Set_New_Position(int32_t new_pos)
     position_setpoint = new_pos;
 }
 
+//******************************************************************************
+// Function stepper_ctrl_Jog_N
+//******************************************************************************
+void stepper_ctrl_Jog_N(void)
+{
+    jog_n = 1;
+}
+
+//******************************************************************************
+// Function stepper_ctrl_Jog_P
+//******************************************************************************
+void stepper_ctrl_Jog_P(void)
+{
+    jog_p = 1;
+}
+
+void stepper_ctrl_Stop(void)
+{
+    motion_stop = 1;
+}
 
 //******************************************************************************
 // stepper_ctrl_Begin
@@ -245,10 +227,7 @@ void stepper_ctrl_Set_New_Position(int32_t new_pos)
 //******************************************************************************
 void stepper_ctrl_Begin(void)
 {
-    hmi_jog_n = !(DigitalInput_GetValue(pUsr_Btn_2));
-    hmi_jog_p = !(DigitalInput_GetValue(pUsr_Btn_1));
-    limit_p = !(DigitalInput_GetValue(pLimit_SW_Plus));
-    limit_n = !(DigitalInput_GetValue(pLimit_SW_Minus));
+
 }
 
 //******************************************************************************
@@ -257,8 +236,9 @@ void stepper_ctrl_Begin(void)
 //******************************************************************************
 void stepper_ctrl_End(void)
 {
-    hmi_jog_n_old = hmi_jog_n;
-    hmi_jog_p_old = hmi_jog_p;
+    jog_p = 0;  // Clear flag
+    jog_n = 0;  // Clear flag
+    motion_stop = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
