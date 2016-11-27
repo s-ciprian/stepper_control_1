@@ -35,7 +35,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeIncludeSearchPath>.;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\FreeRTOS\Source\CMSIS_RTOS;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\FreeRTOS\Source\include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\FreeRTOS\Source\Portable\gcc\ARM_CM4F;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\Legacy;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\RTOS\Template;c:\sysgcc\arm-eabi\arm-eabi\include\c++\5.3.0;c:\sysgcc\arm-eabi\arm-eabi\include\c++\5.3.0\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\5.3.0\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\5.3.0\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\5.3.0\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;../../Drivers/BSP/Components/l6474;../../Drivers/BSP/MotorControl;../../Drivers/BSP/STM32F4xx-Nucleo;../../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../../Drivers/CMSIS/Include;../../Drivers/STM32F4xx_HAL_Driver/Inc;../../Inc;../../Src/cmd;../../Src/comm;../../Src/scheduler;../../Src/stepper_ctrl;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>.;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\FreeRTOS\Source\CMSIS_RTOS;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\FreeRTOS\Source\include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\FreeRTOS\Source\Portable\gcc\ARM_CM4F;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\STM32F4xx_HAL_Driver\Inc\Legacy;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Device\ST\STM32F4xx\Include\t;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx\CMSIS_HAL\Include;c:\sysgcc\arm-eabi\arm-eabi\include\c++\6.2.0;c:\sysgcc\arm-eabi\arm-eabi\include\c++\6.2.0\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\6.2.0\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\6.2.0\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\6.2.0\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;../../Drivers/BSP/Components/l6474;../../Drivers/BSP/MotorControl;../../Drivers/BSP/STM32F4xx-Nucleo;../../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../../Drivers/CMSIS/Include;../../Drivers/STM32F4xx_HAL_Driver/Inc;../../Inc;../../Src/cmd;../../Src/comm;../../Src/scheduler;../../Src/stepper_ctrl;../../Src/lcd;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\stm32_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
@@ -148,6 +148,7 @@
     <ClCompile Include="..\..\Src\hc_app\hca.c" />
     <ClCompile Include="..\..\Src\io\di.c" />
     <ClCompile Include="..\..\Src\io\do.c" />
+    <ClCompile Include="..\..\Src\lcd\nhd_0216.c" />
     <ClCompile Include="..\..\Src\main.c" />
     <ClCompile Include="..\..\Src\scheduler\sch_hlp.c" />
     <ClCompile Include="..\..\Src\stepper_ctrl\stepper_ctrl.c" />
@@ -297,6 +298,7 @@
     <ClInclude Include="..\..\Src\io\di.h" />
     <ClInclude Include="..\..\Src\io\dio_typedef.h" />
     <ClInclude Include="..\..\Src\io\do.h" />
+    <ClInclude Include="..\..\Src\lcd\nhd_0216.h" />
     <ClInclude Include="..\..\Src\scheduler\sch_hlp.h" />
     <ClInclude Include="..\..\Src\stepper_ctrl\stepper_ctrl.h" />
     <ClInclude Include="stm32f4xx_hal_conf.h" />
