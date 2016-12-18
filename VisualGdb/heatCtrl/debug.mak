@@ -6,7 +6,7 @@ BINARYDIR := Debug
 
 #Additional flags
 PREPROCESSOR_MACROS := DEBUG
-INCLUDE_DIRS := ../../Drivers/BSP/Components/l6474 ../../Drivers/BSP/MotorControl ../../Drivers/BSP/STM32F4xx-Nucleo ../../Drivers/CMSIS/Device/ST/STM32F4xx/Include ../../Drivers/CMSIS/Include ../../Drivers/STM32F4xx_HAL_Driver/Inc ../../Inc ../../Src/cmd ../../Src/comm ../../Src/scheduler ../../Src/stepper_ctrl
+INCLUDE_DIRS := ../../Drivers/BSP/Components/l6474 ../../Drivers/BSP/MotorControl ../../Drivers/BSP/STM32F4xx-Nucleo ../../Drivers/CMSIS/Device/ST/STM32F4xx/Include ../../Drivers/CMSIS/Include ../../Drivers/STM32F4xx_HAL_Driver/Inc ../../Inc ../../Src/cmd ../../Src/comm ../../Src/scheduler ../../Src/stepper_ctrl ../../Src/lcd
 LIBRARY_DIRS := 
 LIBRARY_NAMES := 
 ADDITIONAL_LINKER_INPUTS := 

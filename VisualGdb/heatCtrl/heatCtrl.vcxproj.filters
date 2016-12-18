@@ -68,6 +68,9 @@
     <Filter Include="Source files\App\hc_app">
       <UniqueIdentifier>{6b5bc484-0a68-4618-8208-72c07c7d96be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\App\lcd">
+      <UniqueIdentifier>{0b9b477b-29e4-460f-b06f-c1f32a530e34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="system_stm32f4xx.c">
@@ -348,6 +351,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Src\hc_app\hca.c">
       <Filter>Source files\App\hc_app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\lcd\nhd_0216.c">
+      <Filter>Source files\App\lcd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -782,6 +788,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Src\hc_app\hca.h">
       <Filter>Source files\App\hc_app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\lcd\nhd_0216.h">
+      <Filter>Source files\App\lcd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
