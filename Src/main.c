@@ -42,13 +42,12 @@
 #include <string.h>
 #include <../CMSIS_RTOS/cmsis_os.h>
 #include "main.h"
-//#include "uart2.h"
+#include "uart2.h"
 #include "stepper_ctrl.h"
 #include "cmd.h"
 #include "io/do.h"
 #include "io/di.h"
 #include "hc_app/hca.h"
-#include "lcd/nhd_0216.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Private typedef
@@ -451,30 +450,17 @@ static void Motor_Controller(void *argument)
 static void Serial_Comm(void *argument)
 {
 	portTickType xLastWakeTime = 0;
-    int16_t lcd_init_done_flag = 0;
 	int32_t act_pos = 0;
 	int32_t cx = 0;
 	uint16_t statusRegister;
 	char str[20] = { 0 };
 	
-//	uart2_Init();
+	uart2_Init();
 	
 	xLastWakeTime = xTaskGetTickCount();
 	
 	for (;;)
 	{
-        // Init the LCD
-        if (!lcd_init_done_flag)
-        {
-            // Call LCD Init function, pass a pointer to the function used to send
-            // data over serial.
-            // LCD Init process can take some time, when done set the flag.
-             if(lcd_Init() == 0)
-             {
-                lcd_init_done_flag = 1;
-             }
-        }
-
 		act_pos = stepper_ctrl_Get_Actual_Position();
 		/* Get the value of the status register of the L6474 */
 		statusRegister = BSP_MotorControl_CmdGetStatus(0);
@@ -483,12 +469,7 @@ static void Serial_Comm(void *argument)
 		memset(str, 0, sizeof(str));
 		// Format and send string containing status register of motor driver and actual motor position
 		cx = snprintf(str, sizeof(str), "%i, %u\r\n", act_pos, statusRegister);
-//        uart2_Transmit((uint8_t *)str, cx);
-
-        if (lcd_init_done_flag) // Don't send data until LCD is initialized
-        {           
-            lcd_Put_Act_Pos();
-        }
+		uart2_Transmit((uint8_t *)str, cx);
 		
 		vTaskDelayUntil(&xLastWakeTime, (500 / portTICK_RATE_MS));
 	}
