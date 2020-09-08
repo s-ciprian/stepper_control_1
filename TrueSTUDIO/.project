@@ -124,7 +124,7 @@
 		<link>
 			<name>Application/uart2.c</name>
 			<type>1</type>
-			<location>D:/working/mc_1s/Src/comm/uart2.c</location>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/comm/uart2.c</locationURI>
 		</link>
 		<link>
 			<name>Doc/readme.txt</name>
@@ -149,32 +149,32 @@
 		<link>
 			<name>Application/cmd/cmd.c</name>
 			<type>1</type>
-			<location>D:/working/mc_1s/Src/cmd/cmd.c</location>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/cmd/cmd.c</locationURI>
 		</link>
 		<link>
 			<name>Application/cmd/cmd.h</name>
 			<type>1</type>
-			<location>D:/working/mc_1s/Src/cmd/cmd.h</location>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/cmd/cmd.h</locationURI>
 		</link>
 		<link>
 			<name>Application/sch_hlp/sch_hlp.c</name>
 			<type>1</type>
-			<location>D:/working/mc_1s/Src/scheduler/sch_hlp.c</location>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/scheduler/sch_hlp.c</locationURI>
 		</link>
 		<link>
 			<name>Application/sch_hlp/sch_hlp.h</name>
 			<type>1</type>
-			<location>D:/working/mc_1s/Src/scheduler/sch_hlp.h</location>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/scheduler/sch_hlp.h</locationURI>
 		</link>
 		<link>
 			<name>Application/stepper_controler/stepper_ctrl.c</name>
 			<type>1</type>
-			<location>D:/working/mc_1s/Src/stepper_ctrl/stepper_ctrl.c</location>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/stepper_ctrl/stepper_ctrl.c</locationURI>
 		</link>
 		<link>
 			<name>Application/stepper_controler/stepper_ctrl.h</name>
 			<type>1</type>
-			<location>D:/working/mc_1s/Src/stepper_ctrl/stepper_ctrl.h</location>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/stepper_ctrl/stepper_ctrl.h</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/Components</name>

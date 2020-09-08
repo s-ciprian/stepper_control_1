@@ -35,6 +35,14 @@
   ******************************************************************************
   */
 
+/* *****************************************************************************
+ * File history
+ * ----------------------------------------------------------------------------
+ * 09.09.2020 Added prototype for the original code now moved in a function
+ * ----------------------------------------------------------------------------
+ *
+ * */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "uart2.h"
@@ -68,6 +76,8 @@
 
 /* Private function prototypes -----------------------------------------------*/
 static void MyFlagInterruptHandler(void);
+void originalTestCode(void);
+
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -135,6 +145,8 @@ int main(void)
    // Testing commands to motor driver
    //ExecuteCommand("mc_GoTo 20000");
    //ExecuteCommand("mc_Run FW");
+
+   /* originalTestCode(); */
 
    btnOldVal = BSP_PB_GetState(BUTTON_USER);
 
